@@ -101,7 +101,7 @@ require APP_ROOT . '/partials/header.php';
           <?php endforeach; ?>
         </tbody>
       </table>
-      <p class="cmp-note"><?= icon('info') ?> Add <b>roadside</b> and <b>rental</b> to any vehicle, and <b>PIP</b> and <b>uninsured motorist</b> to the whole policy.</p>
+      <p class="cmp-note"><?= icon('info') ?><span>Add <b>roadside</b> and <b>rental</b> to any vehicle, and <b>PIP</b> and <b>uninsured motorist</b> to the whole policy.</span></p>
     </div>
   </div>
 </section>

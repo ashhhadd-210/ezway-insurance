@@ -192,9 +192,9 @@ function validate_quote(array $in): array
             $err[$p . 'vin'] = 'This VIN is already listed.';
         } else {
             $seen[$vin] = true;
-            // Prefer our own cached decode over whatever the browser sent.
-            $cached = db_one('SELECT data FROM vin_cache WHERE vin = ?', [$vin]);
-            if ($cached && ($dec = json_decode($cached['data'], true)) && !empty($dec['ok'])) {
+            // Use our own decode (cached, or looked up now) over whatever the browser sent.
+            $dec = vin_decode($vin);
+            if (!empty($dec['ok'])) {
                 foreach (['year', 'make', 'model', 'trim', 'body'] as $k) {
                     $row[$k] = (string) $dec[$k];
                 }
