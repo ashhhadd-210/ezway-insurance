@@ -1,0 +1,11 @@
+.DS_Store
+.vercel
+node_modules/
+# Runtime data (database, encryption key, logs) never goes in git
+public_html/storage/*
+!public_html/storage/.htaccess
+!public_html/storage/.gitignore
+!public_html/storage/index.php
+
+# Earlier standalone sample sent to the client
+quote-sample.html
