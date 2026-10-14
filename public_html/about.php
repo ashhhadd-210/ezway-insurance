@@ -57,8 +57,11 @@ require APP_ROOT . '/partials/header.php';
         <rect x="0" y="350" width="480" height="70" fill="#0D1640"/>
         <path d="M0 386h480" stroke="#FFD48A" stroke-width="4" stroke-dasharray="26 20"/>
         <g class="about-car" transform="translate(40 312)">
-          <path d="M6 50c0-9 5-13 14-14l29-4c9-11 21-19 39-20h29c13 0 21 6 30 18l11 4c9 2 13 8 13 15v5c0 3-2 4-4 4H9c-2 0-3-1-3-4Z" fill="#FFB547"/>
-          <path d="M58 33c6-9 15-14 28-14h9v14Zm43-14h15c9 0 15 5 21 14h-36Z" fill="#CFE9F5"/>
+          <g transform="translate(177 0) scale(-1 1)">
+            <path d="M6 50c0-9 5-13 14-14l29-4c9-11 21-19 39-20h29c13 0 21 6 30 18l11 4c9 2 13 8 13 15v5c0 3-2 4-4 4H9c-2 0-3-1-3-4Z" fill="#FFB547"/>
+            <path d="M58 33c6-9 15-14 28-14h9v14Zm43-14h15c9 0 15 5 21 14h-36Z" fill="#CFE9F5"/>
+          </g>
+          <rect x="160" y="40" width="9" height="6" rx="2" fill="#FFF3D1"/>
           <circle cx="44" cy="58" r="13" fill="#0D1640"/><circle cx="44" cy="58" r="6" fill="#9FB3C8"/>
           <circle cx="134" cy="58" r="13" fill="#0D1640"/><circle cx="134" cy="58" r="6" fill="#9FB3C8"/>
         </g>

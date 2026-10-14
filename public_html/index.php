@@ -99,14 +99,17 @@ require APP_ROOT . '/partials/header.php';
             </g>
             <ellipse cx="141" cy="98" rx="138" ry="9" fill="#000" opacity=".35"/>
             <g class="car-body">
-              <path d="M10 80c0-14 8-20 22-22l46-6c14-18 34-30 62-32h46c20 0 34 10 48 28l18 6c14 4 20 12 20 24v8c0 4-3 6-7 6H14c-3 0-4-2-4-6Z" fill="url(#carBody)"/>
-              <path d="M92 52c10-14 24-22 44-22h14v22Zm68-22h24c14 0 24 8 34 22h-58Z" fill="url(#glass)"/>
-              <path d="M102 50c6-8 14-14 26-16" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <path d="M155 52v34" stroke="#D9821F" stroke-width="2"/>
-              <rect x="128" y="60" width="14" height="4" rx="2" fill="#D9821F"/><rect x="170" y="60" width="14" height="4" rx="2" fill="#D9821F"/>
-              <path d="M10 72h262" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>
-              <rect x="258" y="60" width="14" height="9" rx="3" fill="#FFF3D1"/>
-              <rect x="10" y="62" width="9" height="9" rx="3" fill="#E5484D"/>
+              <!-- Body drawn facing left, mirrored so the long hood and sloped windshield face the direction of travel -->
+              <g transform="translate(282 0) scale(-1 1)">
+                <path d="M10 80c0-14 8-20 22-22l46-6c14-18 34-30 62-32h46c20 0 34 10 48 28l18 6c14 4 20 12 20 24v8c0 4-3 6-7 6H14c-3 0-4-2-4-6Z" fill="url(#carBody)"/>
+                <path d="M92 52c10-14 24-22 44-22h14v22Zm68-22h24c14 0 24 8 34 22h-58Z" fill="url(#glass)"/>
+                <path d="M102 50c6-8 14-14 26-16" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <path d="M155 52v34" stroke="#D9821F" stroke-width="2"/>
+                <rect x="128" y="60" width="14" height="4" rx="2" fill="#D9821F"/><rect x="170" y="60" width="14" height="4" rx="2" fill="#D9821F"/>
+              </g>
+              <path d="M12 72h258" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>
+              <rect x="256" y="62" width="13" height="8" rx="3" fill="#FFF3D1"/>
+              <rect x="11" y="69" width="7" height="8" rx="2.5" fill="#E5484D"/>
             </g>
             <g transform="translate(70 92)"><g class="wheel"><circle r="21" fill="#0D1640"/><circle r="11" fill="#9FB3C8"/><path d="M0-11v22M-11 0h22" stroke="#0D1640" stroke-width="3"/><circle r="3.5" fill="#0D1640"/></g></g>
             <g transform="translate(214 92)"><g class="wheel"><circle r="21" fill="#0D1640"/><circle r="11" fill="#9FB3C8"/><path d="M0-11v22M-11 0h22" stroke="#0D1640" stroke-width="3"/><circle r="3.5" fill="#0D1640"/></g></g>

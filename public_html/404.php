@@ -18,7 +18,7 @@ require APP_ROOT . '/partials/header.php';
       <path d="M10 120h300" stroke="var(--navy-900)" stroke-width="4" stroke-linecap="round"/>
       <path class="lane" d="M10 132h300" stroke="var(--amber-400)" stroke-width="4" stroke-dasharray="20 16"/>
       <g transform="translate(110 64)">
-        <path d="M4 40c0-7 4-10 11-11l23-3c7-9 17-15 31-16h23c10 0 17 5 24 14l9 3c7 2 10 6 10 12v4c0 2-1 3-3 3H6c-1 0-2-1-2-3Z" fill="var(--amber-400)"/>
+        <path transform="translate(140 0) scale(-1 1)" d="M4 40c0-7 4-10 11-11l23-3c7-9 17-15 31-16h23c10 0 17 5 24 14l9 3c7 2 10 6 10 12v4c0 2-1 3-3 3H6c-1 0-2-1-2-3Z" fill="var(--amber-400)"/>
         <circle cx="36" cy="46" r="10" fill="var(--navy-900)"/><circle cx="108" cy="46" r="10" fill="var(--navy-900)"/>
       </g>
       <g transform="translate(250 40)"><path d="M0 0v80" stroke="var(--navy-900)" stroke-width="4"/><path d="M0 4h40l-8 12 8 12H0Z" fill="var(--brand-500)"/></g>
