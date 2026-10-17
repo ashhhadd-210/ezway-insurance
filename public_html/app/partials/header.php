@@ -58,9 +58,11 @@ $graph = array_merge($agencies, array_map(fn ($s) => array_diff_key($s, ['@conte
 <title><?= e($pageTitle) ?></title>
 <meta name="description" content="<?= e($desc) ?>">
 <link rel="canonical" href="<?= e($canonical) ?>">
+<?php if (spanish_enabled()): ?>
 <link rel="alternate" hreflang="en" href="<?= e(page_url($path, 'en')) ?>">
 <link rel="alternate" hreflang="es" href="<?= e(page_url($path, 'es')) ?>">
 <link rel="alternate" hreflang="x-default" href="<?= e(page_url($path, 'en')) ?>">
+<?php endif; ?>
 <?php if (!empty($page['noindex'])): ?><meta name="robots" content="noindex"><?php endif; ?>
 <meta name="theme-color" content="#0D1640">
 <meta property="og:type" content="website">
@@ -97,9 +99,11 @@ $graph = array_merge($agencies, array_map(fn ($s) => array_diff_key($s, ['@conte
     </nav>
 
     <div class="nav-cta">
+      <?php if (spanish_enabled()): ?>
       <a class="lang-switch" href="<?= e(url(($otherLang === 'es' ? 'es/' : '') . $path)) ?>" hreflang="<?= $otherLang ?>" lang="<?= $otherLang ?>" aria-label="<?= e(L('Ver en español', 'View in English')) ?>">
         <span class="<?= lang() === 'en' ? 'on' : '' ?>">EN</span><span class="<?= lang() === 'es' ? 'on' : '' ?>">ES</span>
       </a>
+      <?php endif; ?>
       <a class="nav-phone" href="<?= e(tel_href(cfg('site.phone'))) ?>"><?= icon('phone') ?><span><?= e(cfg('site.phone')) ?></span></a>
       <a class="btn btn-primary btn-sm" href="<?= e(lurl('quote')) ?>" data-quote><?= e(L('Get a quote', 'Cotizar')) ?></a>
       <button class="nav-burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="<?= e(L('Open menu', 'Abrir menú')) ?>" data-burger data-label-open="<?= e(L('Open menu', 'Abrir menú')) ?>" data-label-close="<?= e(L('Close menu', 'Cerrar menú')) ?>">
@@ -117,7 +121,9 @@ $graph = array_merge($agencies, array_map(fn ($s) => array_diff_key($s, ['@conte
     <div class="drawer-foot">
       <a class="btn btn-primary btn-block" href="<?= e(lurl('quote')) ?>" data-quote><?= e(L('Start your quote', 'Empieza tu cotización')) ?> <?= icon('arrow-right') ?></a>
       <a class="btn btn-ghost btn-block" href="<?= e(tel_href(cfg('site.phone'))) ?>"><?= icon('phone') ?> <?= e(L('Call', 'Llamar al')) ?> <?= e(cfg('site.phone')) ?></a>
+      <?php if (spanish_enabled()): ?>
       <a class="btn btn-ghost btn-block" href="<?= e(url(($otherLang === 'es' ? 'es/' : '') . $path)) ?>" lang="<?= $otherLang ?>"><?= icon('language') ?> <?= e(L('Ver en español', 'View in English')) ?></a>
+      <?php endif; ?>
     </div>
   </div>
 </header>

@@ -14,6 +14,10 @@ return [
 
     'timezone' => 'America/Chicago',   // Austin, TX
 
+    // Spanish version of the website (/es/ pages, ES switch, Spanish quote form
+    // and emails). Everything is built; set to true to switch it on.
+    'spanish' => false,
+
     // ---------------------------------------------------------------------
     // Agency details (used across every page, in emails and for SEO).
     // Text with 'en' and 'es' keys is shown in the visitor's language.

@@ -5,7 +5,7 @@ $faqs = [
     [L('Can I get car insurance without a driver license?', '¿Puedo sacar seguro de auto sin licencia de manejo?'),
      L('Yes. No license, no problem: we accept any type of ID, including foreign licenses, passports and matrícula consular. Your agent finds the companies that accept it.', 'Sí. ¿Sin licencia? No hay problema: aceptamos cualquier tipo de ID, como licencias extranjeras, pasaporte y matrícula consular. Tu agente busca las compañías que la aceptan.')],
     [L('Do you speak Spanish?', '¿Hablan español?'),
-     L('Yes. Our team speaks English and Spanish, and this whole website, including the quote form, is available in Spanish.', 'Sí. Nuestro equipo habla inglés y español, y todo este sitio, incluyendo la cotización, está en español.')],
+     L(spanish_enabled() ? 'Yes. Our team speaks English and Spanish, and this whole website, including the quote form, is available in Spanish.' : 'Yes. Our team speaks English and Spanish. Call or visit any of our offices and we\'ll help you in the language you prefer.', 'Sí. Nuestro equipo habla inglés y español, y todo este sitio, incluyendo la cotización, está en español.')],
     [L('Do you only do car insurance?', '¿Solo hacen seguro de auto?'),
      L('No. We also do home, commercial auto, general liability, workers comp and bonds, plus title transfers, plates, registration and LLC/DBA registration.', 'No. También hacemos seguro de casa, auto comercial, responsabilidad general, compensación de trabajadores y bonos, además de transferencias de título, placas, registro y registro de LLC/DBA.')],
     [L('Does a quote cost anything?', '¿La cotización cuesta algo?'),

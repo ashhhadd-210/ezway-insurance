@@ -7,8 +7,16 @@ defined('APP') or exit;
  * translation.
  */
 
+function spanish_enabled(): bool
+{
+    return (bool) cfg('spanish', false);
+}
+
 function detect_lang(): string
 {
+    if (!spanish_enabled()) {
+        return 'en';
+    }
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
     $base = base_path();
     if ($base !== '' && str_starts_with($path, $base)) {
@@ -24,7 +32,7 @@ function lang(): string
 
 function set_lang(string $lang): void
 {
-    $GLOBALS['__lang'] = $lang === 'es' ? 'es' : 'en';
+    $GLOBALS['__lang'] = $lang === 'es' && spanish_enabled() ? 'es' : 'en';
 }
 
 function L(string $en, string $es): string
@@ -132,4 +140,19 @@ function office_schema_hours(array $o): array
         }
     }
     return $spec;
+}
+
+/** While the Spanish site is off, send /es/... visitors to the English page. */
+function redirect_disabled_spanish(): void
+{
+    if (spanish_enabled() || PHP_SAPI === 'cli') {
+        return;
+    }
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $base = base_path();
+    $rel = $base !== '' && str_starts_with($path, $base) ? substr($path, strlen($base)) : $path;
+    if (preg_match('#^/es(/(.*))?$#', $rel, $m)) {
+        header('Location: ' . url($m[2] ?? ''), true, 302);
+        exit;
+    }
 }

@@ -42,7 +42,7 @@ website/
 | License numbers stored encrypted, shown only in the dashboard | AES-256-GCM (`app/lib/crypto.php`). Emails and the CSV export show only the last 4 digits |
 | Password-protected dashboard to view every quote | `/admin`. List, search, filters, full details, status, notes, CSV export, multiple users |
 | Email notification for each request | Sent to `mail.notify_to`. The customer also gets a confirmation email |
-| Round 2: full Spanish version, including the quote form | Every page is also at `/es/…`, with an EN/ES switch in the header. Copy is written inline as `L('English', 'Español')`. Requests remember the language: the dashboard flags Spanish customers and their confirmation email goes out in Spanish |
+| Round 2: full Spanish version, including the quote form (**switched off**: add-on, turn on with `'spanish' => true` in `config.php`) | Every page is also at `/es/…`, with an EN/ES switch in the header. Copy is written inline as `L('English', 'Español')`. Requests remember the language: the dashboard flags Spanish customers and their confirmation email goes out in Spanish |
 | Round 2: more than car insurance | Services page + quote form for home, business & contractors (GL, workers comp, builders risk, equipment, fidelity bonds), bonds, title & registration (transfers, plates, temp plates, renewals, salvage, out-of-state) and LLC/DBA. All defined once in `app/lib/content.php` |
 | Round 2: personal vs commercial auto | Commercial asks for the company name and offers higher limits (up to $1M combined) |
 | Round 2: lienholder when full coverage is chosen | Per vehicle: financed/leased yes/no, plus the lienholder name |
