@@ -7,7 +7,8 @@ website/
 ├── public_html/        ← upload the CONTENTS of this folder to HostGator's public_html
 │   ├── index.php       Home
 │   ├── about.php       About
-│   ├── coverage.php    Coverage (services) + FAQ
+│   ├── auto-insurance.php  Personal & commercial auto, coverages, FAQ (coverage.php redirects here)
+│   ├── services.php    Home, business & contractors, bonds, title & registration, LLC/DBA
 │   ├── contact.php     Contact + message form
 │   ├── quote.php       Full-page quote form (the pop-up version is on every page)
 │   ├── privacy.php     Privacy policy (template – have it reviewed)
@@ -41,6 +42,12 @@ website/
 | License numbers stored encrypted, shown only in the dashboard | AES-256-GCM (`app/lib/crypto.php`). Emails and the CSV export show only the last 4 digits |
 | Password-protected dashboard to view every quote | `/admin`. List, search, filters, full details, status, notes, CSV export, multiple users |
 | Email notification for each request | Sent to `mail.notify_to`. The customer also gets a confirmation email |
+| Round 2: full Spanish version, including the quote form | Every page is also at `/es/…`, with an EN/ES switch in the header. Copy is written inline as `L('English', 'Español')`. Requests remember the language: the dashboard flags Spanish customers and their confirmation email goes out in Spanish |
+| Round 2: more than car insurance | Services page + quote form for home, business & contractors (GL, workers comp, builders risk, equipment, fidelity bonds), bonds, title & registration (transfers, plates, temp plates, renewals, salvage, out-of-state) and LLC/DBA. All defined once in `app/lib/content.php` |
+| Round 2: personal vs commercial auto | Commercial asks for the company name and offers higher limits (up to $1M combined) |
+| Round 2: lienholder when full coverage is chosen | Per vehicle: financed/leased yes/no, plus the lienholder name |
+| Round 2: "No license, no problem": any ID accepted | Drivers can use a US license, foreign license or other ID (passport, matrícula consular, state ID). Numbers are encrypted |
+| Round 2: 4 Austin offices with different hours | Set in `config.php` under `site.offices`. Shown on Home, Locations and the footer with a live "Open / Closed" badge (Austin time), plus SEO data for each office |
 | Basic SEO | Titles/descriptions, canonical URLs, Open Graph image, JSON-LD (InsuranceAgency, FAQPage), sitemap.xml, robots.txt, clean URLs |
 | Artwork / UI design | Custom SVG illustrations and animations, icon set, share image, favicons |
 | Deploy on HostGator | Steps below |
@@ -89,7 +96,8 @@ website/
 
   The dashboard has its own copy at the top of `assets/css/admin.css`.
 - **Share image & icon:** open `tools/og-image.html` and `tools/apple-touch-icon.html`. Change the name and colors, then screenshot them at 1200×630 and 180×180 into `assets/img/og-image.png` and `assets/img/apple-touch-icon.png`.
-- **Copy:** page text is in the page files. Coverage descriptions are in `coverage_info()` in `app/lib/quote.php`. Quote-form options (liability levels, deductibles, relationships) are constants at the top of the same file.
+- **Copy:** page text is in the page files, written as `L('English', 'Español')` so both languages sit side by side. Services (and the quote-form questions for each) and auto coverage descriptions are in `app/lib/content.php`. Quote-form options (liability levels, deductibles, relationships, ID types) are at the top of `app/lib/quote.php`. Text used by the scripts is in `app/partials/footer.php` (`$js`).
+- **Business details:** phone, email, offices and hours, years in business and number of insurance companies are all in `config.php` under `site`. Add the Texas agency license number to `site.license` to show it in the footer.
 
 ## Vercel preview
 

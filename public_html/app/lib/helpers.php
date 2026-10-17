@@ -140,12 +140,6 @@ function tel_href(string $phone): string
     return 'tel:+1' . substr(digits($phone), -10);
 }
 
-function full_address(): string
-{
-    $a = cfg('site.address');
-    return trim(sprintf('%s, %s, %s %s', $a['street'], $a['city'], $a['state'], $a['zip']), ' ,');
-}
-
 /** Read and decode a JSON request body, with a size cap. */
 function read_json_body(int $maxBytes = 65536): array
 {

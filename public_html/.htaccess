@@ -22,8 +22,15 @@ ErrorDocument 404 /404.php
   # One address per page for SEO: /index.php -> /, /about.php -> /about
   RewriteCond %{THE_REQUEST} \s/+index\.php[\s?] [NC]
   RewriteRule ^ / [R=301,L]
-  RewriteCond %{THE_REQUEST} \s/+(about|coverage|contact|quote|privacy)\.php[\s?] [NC]
+  RewriteCond %{THE_REQUEST} \s/+(about|auto-insurance|services|contact|quote|privacy)\.php[\s?] [NC]
   RewriteRule ^ /%1 [R=301,L]
+
+  # The old Coverage page is now Auto insurance
+  RewriteRule ^(es/)?coverage/?$ /$1auto-insurance [R=301,L]
+
+  # Spanish pages live under /es/ and use the same files
+  RewriteRule ^es/?$ index.php [L]
+  RewriteRule ^es/([a-z-]+)/?$ $1.php [L]
 
   # Clean URLs: /about serves about.php
   RewriteCond %{REQUEST_FILENAME} !-f

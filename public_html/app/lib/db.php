@@ -1,7 +1,7 @@
 <?php
 defined('APP') or exit;
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 function db(): PDO
 {
@@ -58,6 +58,8 @@ function migrate(PDO $pdo): void
     $pdo->exec("CREATE TABLE IF NOT EXISTS quotes (
         id $id,
         ref {$s(16)} NOT NULL UNIQUE,
+        service {$s(30)} NOT NULL DEFAULT 'personal_auto',
+        lang {$s(2)} NOT NULL DEFAULT 'en',
         status {$s(20)} NOT NULL DEFAULT 'new',
         is_read SMALLINT NOT NULL DEFAULT 0,
         first_name {$s(80)} NOT NULL,
@@ -112,9 +114,19 @@ function migrate(PDO $pdo): void
         created_at $dt NOT NULL
     )$suffix");
 
+    // v2: service and language columns for databases created by v1.
+    foreach (["service {$s(30)} NOT NULL DEFAULT 'personal_auto'", "lang {$s(2)} NOT NULL DEFAULT 'en'"] as $col) {
+        try {
+            $pdo->exec("ALTER TABLE quotes ADD COLUMN $col");
+        } catch (PDOException) {
+            // Column already exists.
+        }
+    }
+
     $indexes = [
         'idx_quotes_status'  => 'quotes (status, created_at)',
         'idx_quotes_created' => 'quotes (created_at)',
+        'idx_quotes_service' => 'quotes (service, created_at)',
         'idx_messages_created' => 'messages (created_at)',
         'idx_throttle'       => 'throttle (bucket, key_hash, created_at)',
     ];

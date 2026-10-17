@@ -5,14 +5,14 @@ http_response_code(404);
 $page = [
     'slug'    => 'notfound',
     'path'    => '',
-    'title'   => 'Page not found',
+    'title'   => L('Page not found', 'Página no encontrada'),
     'noindex' => true,
 ];
 require APP_ROOT . '/partials/header.php';
 ?>
 
 <section class="page-hero nf">
-  <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="grid-lines"></span><?= pinwheel_svg('pinwheel page-pin') ?></div>
+  <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="grid-lines"></span></div>
   <div class="wrap page-hero-in">
     <svg class="nf-art" viewBox="0 0 320 140" aria-hidden="true">
       <path d="M10 120h300" stroke="var(--navy-900)" stroke-width="4" stroke-linecap="round"/>
@@ -23,11 +23,11 @@ require APP_ROOT . '/partials/header.php';
       </g>
       <g transform="translate(250 40)"><path d="M0 0v80" stroke="var(--navy-900)" stroke-width="4"/><path d="M0 4h40l-8 12 8 12H0Z" fill="var(--brand-500)"/></g>
     </svg>
-    <h1>Looks like a wrong turn.</h1>
-    <p class="lead">We couldn't find that page. Let's get you back on the road.</p>
+    <h1><?= e(L('Looks like a wrong turn.', 'Parece que tomaste otra salida.')) ?></h1>
+    <p class="lead"><?= e(L('We couldn\'t find that page. Let\'s get you back on the road.', 'No encontramos esa página. Te ayudamos a volver al camino.')) ?></p>
     <div class="split-actions center">
-      <a class="btn btn-primary" href="<?= e(url()) ?>">Back to home</a>
-      <button class="btn btn-ghost" type="button" data-quote>Start your quote</button>
+      <a class="btn btn-primary" href="<?= e(lurl()) ?>"><?= e(L('Back to home', 'Volver al inicio')) ?></a>
+      <button class="btn btn-ghost" type="button" data-quote><?= e(L('Start your quote', 'Empieza tu cotización')) ?></button>
     </div>
   </div>
 </section>

@@ -1,19 +1,27 @@
 <?php
 require __DIR__ . '/app/bootstrap.php';
 
+$faqs = [
+    [L('Can I get car insurance without a driver license?', '¿Puedo sacar seguro de auto sin licencia de manejo?'),
+     L('Yes. No license, no problem: we accept any type of ID, including foreign licenses, passports and matrícula consular. Your agent finds the companies that accept it.', 'Sí. ¿Sin licencia? No hay problema: aceptamos cualquier tipo de ID, como licencias extranjeras, pasaporte y matrícula consular. Tu agente busca las compañías que la aceptan.')],
+    [L('Do you speak Spanish?', '¿Hablan español?'),
+     L('Yes. Our team speaks English and Spanish, and this whole website, including the quote form, is available in Spanish.', 'Sí. Nuestro equipo habla inglés y español, y todo este sitio, incluyendo la cotización, está en español.')],
+    [L('Do you only do car insurance?', '¿Solo hacen seguro de auto?'),
+     L('No. We also do home, commercial auto, general liability, workers comp and bonds, plus title transfers, plates, registration and LLC/DBA registration.', 'No. También hacemos seguro de casa, auto comercial, responsabilidad general, compensación de trabajadores y bonos, además de transferencias de título, placas, registro y registro de LLC/DBA.')],
+    [L('Does a quote cost anything?', '¿La cotización cuesta algo?'),
+     L('No. Quotes are free and there\'s no obligation to buy. We compare ' . cfg('site.carriers') . '+ companies and you decide in your own time.', 'No. Las cotizaciones son gratis y sin compromiso. Comparamos más de ' . cfg('site.carriers') . ' compañías y tú decides con calma.')],
+];
+
 $page = [
     'slug'        => 'home',
     'path'        => '',
     'title'       => '',
-    'description' => cfg('site.description'),
-    'schema'      => [[
-        '@context' => 'https://schema.org',
-        '@type'    => 'WebSite',
-        'name'     => cfg('site.name'),
-        'url'      => site_url(),
-    ]],
+    'description' => LA(cfg('site.description')),
+    'schema'      => [
+        ['@type' => 'WebSite', 'name' => cfg('site.name'), 'url' => site_url(), 'inLanguage' => ['en', 'es']],
+        ['@type' => 'FAQPage', 'mainEntity' => array_map(fn ($f) => ['@type' => 'Question', 'name' => $f[0], 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f[1]]], $faqs)],
+    ],
 ];
-$cov = coverage_info();
 require APP_ROOT . '/partials/header.php';
 ?>
 
@@ -22,31 +30,34 @@ require APP_ROOT . '/partials/header.php';
   <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="grid-lines"></span><?= pinwheel_svg('pinwheel hero-pin') ?></div>
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="pill reveal"><span class="pill-dot"></span>Licensed local agency · Free quotes</p>
+      <p class="pill reveal"><span class="pill-dot"></span><?= e(L('Licensed in Texas · 4 Austin offices · Se habla español', 'Con licencia en Texas · 4 oficinas en Austin · Hablamos inglés y español')) ?></p>
       <h1 class="hero-h reveal">
-        Insurance for every driver
-        <span class="hl">&amp; every ride.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c60-9 140-13 294-6" /></svg></span>
+        <?= e(L('Insurance for every driver', 'Seguro para cada conductor')) ?>
+        <span class="hl"><?= e(L('& every ride.', 'y cada viaje.')) ?><svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c60-9 140-13 294-6" /></svg></span>
       </h1>
-      <p class="lead reveal">Add your whole household in one simple form: drivers, vehicles and the coverage you want. A licensed agent compares your options and gets back to you fast, with no obligation.</p>
+      <p class="lead reveal"><?= e(L(
+          'Car, home and business insurance from ' . cfg('site.carriers') . '+ companies, plus titles, plates and registration. Tell us what you need once and a local agent finds your best price.',
+          'Seguro de auto, casa y negocio con más de ' . cfg('site.carriers') . ' compañías, además de títulos, placas y registro. Dinos qué necesitas una sola vez y un agente local encuentra tu mejor precio.'
+      )) ?></p>
 
-      <form class="zip-form reveal" data-zipform>
+      <form class="zip-form reveal" data-zipform data-service="">
         <label class="zip-field">
-          <span class="sr">ZIP code</span>
+          <span class="sr"><?= e(L('ZIP code', 'Código postal')) ?></span>
           <?= icon('pin') ?>
-          <input name="zip" inputmode="numeric" maxlength="5" placeholder="Enter your ZIP code" autocomplete="postal-code">
+          <input name="zip" inputmode="numeric" maxlength="5" placeholder="<?= e(L('Enter your ZIP code', 'Tu código postal')) ?>" autocomplete="postal-code">
         </label>
-        <button class="btn btn-primary btn-lg" type="submit">Start my quote <?= icon('arrow-right') ?></button>
+        <button class="btn btn-primary btn-lg" type="submit"><?= e(L('Start my quote', 'Cotizar ahora')) ?> <?= icon('arrow-right') ?></button>
       </form>
 
       <ul class="hero-ticks reveal">
-        <li><?= icon('check') ?> No obligation</li>
-        <li><?= icon('clock') ?> About 3 minutes</li>
-        <li><?= icon('lock') ?> Encrypted &amp; secure</li>
+        <li><?= icon('id') ?> <?= e(L('No license? No problem', '¿Sin licencia? No hay problema')) ?></li>
+        <li><?= icon('clock') ?> <?= e(L('About 3 minutes', 'Unos 3 minutos')) ?></li>
+        <li><?= icon('check') ?> <?= e(L('Free, no obligation', 'Gratis y sin compromiso')) ?></li>
       </ul>
     </div>
 
     <div class="hero-art reveal" data-parallax>
-      <svg class="scene" viewBox="0 0 560 520" role="img" aria-label="Illustration of a car driving under a protective shield">
+      <svg class="scene" viewBox="0 0 560 520" role="img" aria-label="<?= e(L('Illustration of a car driving under a protective shield', 'Ilustración de un auto manejando bajo un escudo protector')) ?>">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0D1640"/><stop offset="1" stop-color="#1B2A68"/></linearGradient>
           <radialGradient id="sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFD48A"/><stop offset=".55" stop-color="#FFB547" stop-opacity=".55"/><stop offset="1" stop-color="#FFB547" stop-opacity="0"/></radialGradient>
@@ -64,8 +75,6 @@ require APP_ROOT . '/partials/header.php';
           </g>
           <circle cx="430" cy="128" r="120" fill="url(#sun)"/>
           <circle cx="430" cy="128" r="40" fill="#FFD48A"/>
-
-          <!-- skyline -->
           <g fill="#142259">
             <rect x="20" y="250" width="46" height="150"/><rect x="72" y="214" width="38" height="186"/><rect x="116" y="262" width="54" height="138"/>
             <rect x="378" y="236" width="42" height="164"/><rect x="426" y="200" width="50" height="200"/><rect x="482" y="256" width="60" height="144"/>
@@ -75,23 +84,15 @@ require APP_ROOT . '/partials/header.php';
             <rect x="130" y="280" width="8" height="10"/><rect x="152" y="306" width="8" height="10"/><rect x="390" y="252" width="8" height="10"/><rect x="404" y="290" width="8" height="10"/>
             <rect x="438" y="220" width="8" height="10"/><rect x="458" y="258" width="8" height="10"/><rect x="496" y="276" width="8" height="10"/><rect x="520" y="304" width="8" height="10"/>
           </g>
-
-          <!-- hills -->
           <path d="M0 360c80-40 160-46 250-24s170 20 310-18v202H0Z" fill="#1C2C70"/>
           <path d="M0 392c110-26 220-22 320-4s170 10 240-8v140H0Z" fill="#26399A"/>
-
-          <!-- protective shield -->
           <g class="shield-big">
             <path d="M280 96 168 138v86c0 74 47 126 112 148 65-22 112-74 112-148v-86L280 96Z" fill="url(#shieldG)" stroke="#8ED3EC" stroke-opacity=".7" stroke-width="2.5"/>
             <path class="shield-check" d="m240 214 28 28 54-56" fill="none" stroke="#8ED3EC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
           </g>
-
-          <!-- road -->
           <rect y="414" width="560" height="106" fill="#0A1233"/>
           <rect y="414" width="560" height="5" fill="#1E2C66"/>
           <path class="lane" d="M-40 470H600" stroke="#FFD48A" stroke-width="5" stroke-dasharray="34 26" stroke-linecap="round"/>
-
-          <!-- car -->
           <g class="car" transform="translate(132 322)">
             <path class="beam" d="M268 58 420 36v70L268 74Z" fill="url(#beam)"/>
             <g class="speed" stroke="#8ED3EC" stroke-width="3" stroke-linecap="round" opacity=".7">
@@ -119,80 +120,122 @@ require APP_ROOT . '/partials/header.php';
 
       <div class="chip chip-1" data-depth="18">
         <span class="chip-ic teal"><?= icon('scan') ?></span>
-        <span><small>VIN detected</small><b>2021 Honda Civic EX</b></span>
+        <span><small><?= e(L('VIN detected', 'VIN detectado')) ?></small><b>2021 Honda Civic EX</b></span>
         <span class="chip-ok"><?= icon('check') ?></span>
       </div>
       <div class="chip chip-2" data-depth="28">
-        <span class="chip-avs"><i>M</i><i>J</i><i class="add"><?= icon('plus') ?></i></span>
-        <span><small>Household</small><b>3 drivers added</b></span>
+        <span class="chip-ic teal"><?= icon('id') ?></span>
+        <span><small><?= e(L('Any type of ID', 'Cualquier tipo de ID')) ?></small><b><?= e(L('Accepted', 'Aceptada')) ?></b></span>
+        <span class="chip-ok"><?= icon('check') ?></span>
       </div>
       <div class="chip chip-3" data-depth="12">
         <span class="chip-ic amber"><?= icon('shield') ?></span>
-        <span><small>Quote request</small><b>Sent to your agent</b></span>
+        <span><small><?= e(L('Quote request', 'Cotización')) ?></small><b><?= e(L('Sent to your agent', 'Enviada a tu agente')) ?></b></span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ COVERAGE MARQUEE ============ -->
+<!-- ============ SERVICES MARQUEE ============ -->
 <div class="marquee" aria-hidden="true">
   <div class="marquee-track">
-    <?php for ($r = 0; $r < 2; $r++): foreach ($cov as $c): ?>
-      <span><?= icon($c['icon']) ?><?= e($c['title']) ?></span>
+    <?php
+    $marquee = [['car', L('Personal auto', 'Auto personal')], ['truck', L('Commercial auto', 'Auto comercial')], ['home', L('Home', 'Casa')],
+        ['shield', L('General liability', 'Responsabilidad general')], ['hardhat', L('Workers comp', 'Compensación de trabajadores')],
+        ['seal', L('Bonds', 'Bonos')], ['doc', L('Title transfers', 'Transferencia de títulos')], ['plate', L('License plates', 'Placas')],
+        ['building', L('LLC & DBA', 'LLC y DBA')]];
+    for ($r = 0; $r < 2; $r++): foreach ($marquee as [$ic, $label]): ?>
+      <span><?= icon($ic) ?><?= e($label) ?></span>
     <?php endforeach; endfor; ?>
   </div>
 </div>
 
-<!-- ============ HOW IT WORKS ============ -->
-<section class="section" aria-labelledby="howTitle">
+<!-- ============ SERVICES ============ -->
+<section class="section" aria-labelledby="svcTitle">
   <div class="wrap">
     <header class="section-head reveal">
-      <p class="eyebrow">How it works</p>
-      <h2 id="howTitle">From "I need insurance" to options in three steps</h2>
-      <p>No long phone calls, no repeating yourself. Tell us once and your agent does the shopping.</p>
+      <p class="eyebrow"><?= e(L('Everything under one roof', 'Todo en un solo lugar')) ?></p>
+      <h2 id="svcTitle"><?= e(L('Insurance and auto services, done the EZ way', 'Seguros y servicios de auto, de la forma más fácil')) ?></h2>
+      <p><?= e(L('From your first car to your growing business, one local team takes care of it all.', 'Desde tu primer auto hasta tu negocio, un solo equipo local se encarga de todo.')) ?></p>
+    </header>
+    <div class="svc-grid">
+      <?php foreach (services() as $key => $s): ?>
+      <article class="svc-card reveal">
+        <span class="svc-ic"><?= icon($s['icon']) ?></span>
+        <h3><?= e($s['title']) ?></h3>
+        <p><?= e($s['short']) ?></p>
+        <div class="svc-actions">
+          <button class="btn btn-primary btn-sm" type="button" data-quote="<?= e($key) ?>"><?= e(L('Get a quote', 'Cotizar')) ?></button>
+          <a class="cov-more" href="<?= e(lurl($s['page'])) ?>"><?= e(L('Learn more', 'Ver más')) ?> <?= icon('arrow-right') ?></a>
+        </div>
+      </article>
+      <?php endforeach; ?>
+      <a class="svc-card svc-card-call reveal" href="<?= e(tel_href(cfg('site.phone'))) ?>">
+        <span class="svc-ic"><?= icon('phone') ?></span>
+        <h3><?= e(L('Not sure what you need?', '¿No sabes qué necesitas?')) ?></h3>
+        <p><?= e(L('Call or stop by any of our 4 Austin offices. We\'ll point you in the right direction, in English or Spanish.', 'Llámanos o visita cualquiera de nuestras 4 oficinas en Austin. Te orientamos en inglés o en español.')) ?></p>
+        <span class="cov-more"><?= e(cfg('site.phone')) ?> <?= icon('arrow-right') ?></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ANY ID ============ -->
+<section class="section section-top0" aria-labelledby="idTitle">
+  <div class="wrap">
+    <div class="id-banner reveal">
+      <div class="id-art" aria-hidden="true">
+        <div class="id-card id-c1"><span class="id-photo"><?= icon('user') ?></span><span class="id-lines"><i></i><i></i><i></i></span><b><?= e(L('Driver license', 'Licencia')) ?></b></div>
+        <div class="id-card id-c2"><span class="id-photo"><?= icon('globe') ?></span><span class="id-lines"><i></i><i></i><i></i></span><b><?= e(L('Passport', 'Pasaporte')) ?></b></div>
+        <div class="id-card id-c3"><span class="id-photo"><?= icon('id') ?></span><span class="id-lines"><i></i><i></i><i></i></span><b>Matrícula</b></div>
+        <span class="id-check"><?= icon('check') ?></span>
+      </div>
+      <div class="id-copy">
+        <p class="eyebrow"><?= e(L('No license? No problem', '¿Sin licencia? No hay problema')) ?></p>
+        <h2 id="idTitle"><?= e(L('We accept any type of ID', 'Aceptamos cualquier tipo de ID')) ?></h2>
+        <p><?= e(L(
+            'US license, foreign license, passport, matrícula consular or state ID. Everyone deserves to drive protected, and we work with the companies that make it possible.',
+            'Licencia de EE. UU., licencia extranjera, pasaporte, matrícula consular o ID del estado. Todos merecen manejar protegidos, y trabajamos con las compañías que lo hacen posible.'
+        )) ?></p>
+        <ul class="id-list">
+          <li><?= icon('check') ?><?= e(L('Personal and commercial auto', 'Auto personal y comercial')) ?></li>
+          <li><?= icon('check') ?><?= e(L('Foreign licenses welcome', 'Licencias extranjeras bienvenidas')) ?></li>
+          <li><?= icon('check') ?><?= e(L('Service in English and Spanish', 'Atención en inglés y español')) ?></li>
+        </ul>
+        <button class="btn btn-accent" type="button" data-quote="personal_auto"><?= e(L('Get my auto quote', 'Cotizar mi auto')) ?> <?= icon('arrow-right') ?></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section section-tint" aria-labelledby="howTitle">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="eyebrow"><?= e(L('How it works', 'Cómo funciona')) ?></p>
+      <h2 id="howTitle"><?= e(L('From "I need insurance" to options in three steps', 'De "necesito seguro" a tener opciones en tres pasos')) ?></h2>
+      <p><?= e(L('No long phone calls, no repeating yourself. Tell us once and your agent does the shopping.', 'Sin llamadas largas ni repetir tus datos. Dinos una vez y tu agente compara por ti.')) ?></p>
     </header>
     <ol class="steps">
       <li class="step-card reveal">
         <span class="step-n">01</span>
         <span class="step-ic"><?= icon('user') ?></span>
-        <h3>Tell us about you</h3>
-        <p>Your name, address and the best way to reach you. That's the hard part done.</p>
+        <h3><?= e(L('Tell us what you need', 'Dinos qué necesitas')) ?></h3>
+        <p><?= e(L('Pick a service and add your details. For auto, add every driver and car with one tap.', 'Elige un servicio y agrega tus datos. Para auto, agrega a todos los conductores y autos con un toque.')) ?></p>
       </li>
       <li class="step-card reveal">
         <span class="step-n">02</span>
-        <span class="step-ic"><?= icon('users') ?></span>
-        <h3>Add drivers &amp; vehicles</h3>
-        <p>Tap <b>+</b> for each driver and car. Enter a VIN and we identify the vehicle for you.</p>
+        <span class="step-ic"><?= icon('search') ?></span>
+        <h3><?= e(L('We compare ' . cfg('site.carriers') . '+ companies', 'Comparamos más de ' . cfg('site.carriers') . ' compañías')) ?></h3>
+        <p><?= e(L('Your licensed agent shops your coverage across the companies we work with.', 'Tu agente con licencia compara tu cobertura entre las compañías con las que trabajamos.')) ?></p>
       </li>
       <li class="step-card reveal">
         <span class="step-n">03</span>
         <span class="step-ic"><?= icon('shield') ?></span>
-        <h3>Get your options</h3>
-        <p>A licensed agent compares coverage and reaches out, usually within one business day.</p>
+        <h3><?= e(L('You choose and save', 'Tú eliges y ahorras')) ?></h3>
+        <p><?= e(L('We reach out with your best options, usually within one business day.', 'Te contactamos con tus mejores opciones, normalmente en un día hábil.')) ?></p>
       </li>
     </ol>
-  </div>
-</section>
-
-<!-- ============ COVERAGE GRID ============ -->
-<section class="section section-tint" aria-labelledby="covTitle">
-  <div class="wrap">
-    <header class="section-head reveal">
-      <p class="eyebrow">Coverage</p>
-      <h2 id="covTitle">Build the protection that fits your life</h2>
-      <p>Pick coverage per vehicle and for the whole policy. Your agent explains every option in plain English.</p>
-    </header>
-    <div class="cov-grid">
-      <?php foreach ($cov as $key => $c): ?>
-      <a class="cov-card reveal" href="<?= e(url('coverage')) ?>#<?= e($key) ?>">
-        <span class="cov-ic"><?= icon($c['icon']) ?></span>
-        <span class="cov-tag"><?= e($c['tag']) ?></span>
-        <h3><?= e($c['title']) ?></h3>
-        <p><?= e($c['short']) ?></p>
-        <span class="cov-more">Learn more <?= icon('arrow-right') ?></span>
-      </a>
-      <?php endforeach; ?>
-    </div>
   </div>
 </section>
 
@@ -200,81 +243,79 @@ require APP_ROOT . '/partials/header.php';
 <section class="section" aria-labelledby="showTitle">
   <div class="wrap show">
     <div class="show-copy reveal">
-      <p class="eyebrow">Made for real households</p>
-      <h2 id="showTitle">One form for the whole family, and every car in the driveway.</h2>
-      <p>Most quote forms make you start over for every driver. Ours doesn't. Add everyone at once and choose coverage for each vehicle.</p>
+      <p class="eyebrow"><?= e(L('Made for real families and businesses', 'Hecho para familias y negocios reales')) ?></p>
+      <h2 id="showTitle"><?= e(L('One form for every driver and every car in the driveway.', 'Un solo formulario para todos tus conductores y autos.')) ?></h2>
+      <p><?= e(L('Most quote forms make you start over for every driver. Ours doesn\'t. Add everyone at once and choose coverage for each vehicle.', 'Otros formularios te hacen empezar de nuevo por cada conductor. El nuestro no. Agrega a todos de una vez y elige la cobertura de cada vehículo.')) ?></p>
       <ul class="feat-list">
-        <li><span><?= icon('plus') ?></span><div><b>Add drivers with one tap</b>Spouse, teen drivers and roommates, with a US or foreign license.</div></li>
-        <li><span><?= icon('scan') ?></span><div><b>VIN auto-detect</b>Type the VIN and we show the year, make and model instantly.</div></li>
-        <li><span><?= icon('shield-plus') ?></span><div><b>Coverage per vehicle</b>Full coverage, roadside and rental, right next to each car.</div></li>
-        <li><span><?= icon('lock') ?></span><div><b>Private by design</b>License numbers are encrypted and seen only by your agent.</div></li>
+        <li><span><?= icon('plus') ?></span><div><b><?= e(L('Add drivers with one tap', 'Agrega conductores con un toque')) ?></b><?= e(L('Spouse, kids, employees: with a US license, foreign license or any ID.', 'Pareja, hijos, empleados: con licencia de EE. UU., extranjera o cualquier ID.')) ?></div></li>
+        <li><span><?= icon('scan') ?></span><div><b><?= e(L('VIN auto-detect', 'Detecta tu VIN')) ?></b><?= e(L('Type the VIN and we show the year, make and model instantly.', 'Escribe el VIN y te mostramos el año, la marca y el modelo al instante.')) ?></div></li>
+        <li><span><?= icon('truck') ?></span><div><b><?= e(L('Personal or commercial', 'Personal o comercial')) ?></b><?= e(L('Insure work trucks under your company name with higher limits.', 'Asegura trocas de trabajo a nombre de tu compañía con límites más altos.')) ?></div></li>
+        <li><span><?= icon('lock') ?></span><div><b><?= e(L('Private by design', 'Privado y seguro')) ?></b><?= e(L('ID numbers are encrypted and seen only by your agent.', 'Los números de ID están cifrados y solo los ve tu agente.')) ?></div></li>
       </ul>
-      <button class="btn btn-primary" type="button" data-quote>Try the quote form <?= icon('arrow-right') ?></button>
+      <button class="btn btn-primary" type="button" data-quote="personal_auto"><?= e(L('Try the quote form', 'Probar la cotización')) ?> <?= icon('arrow-right') ?></button>
     </div>
 
     <div class="mock reveal" data-mock aria-hidden="true">
       <div class="mock-win">
-        <div class="mock-bar"><i></i><i></i><i></i><span>Vehicles · Step 4 of 6</span></div>
+        <div class="mock-bar"><i></i><i></i><i></i><span><?= e(L('Vehicles · Step 5 of 7', 'Vehículos · Paso 5 de 7')) ?></span></div>
         <div class="mock-body">
           <div class="mock-card">
-            <div class="mock-head"><span class="mock-av"><?= icon('car') ?></span><b data-mock-title>Vehicle 1</b></div>
+            <div class="mock-head"><span class="mock-av"><?= icon('car') ?></span><b data-mock-title><?= e(L('Vehicle 1', 'Vehículo 1')) ?></b></div>
             <div class="mock-input"><?= icon('scan') ?><span data-mock-vin></span><i class="caret"></i></div>
             <div class="mock-result" data-mock-result>
               <span class="mock-ok"><?= icon('check') ?></span>
-              <div><b>2020 Toyota Camry SE</b><small>Sedan · Gasoline · FWD</small></div>
+              <div><b>2020 Toyota Camry SE</b><small><?= e(L('Sedan · Gasoline · FWD', 'Sedán · Gasolina · FWD')) ?></small></div>
             </div>
             <div class="mock-chips">
-              <span class="on" data-mock-chip><?= icon('shield-plus') ?>Full coverage</span>
-              <span data-mock-chip><?= icon('wrench') ?>Roadside</span>
-              <span data-mock-chip><?= icon('key') ?>Rental</span>
+              <span class="on" data-mock-chip><?= icon('shield-plus') ?><?= e(L('Full coverage', 'Cobertura completa')) ?></span>
+              <span data-mock-chip><?= icon('wrench') ?><?= e(L('Roadside', 'Asistencia')) ?></span>
+              <span data-mock-chip><?= icon('key') ?><?= e(L('Rental', 'Auto de renta')) ?></span>
             </div>
           </div>
-          <div class="mock-add"><?= icon('plus') ?> Add another vehicle</div>
+          <div class="mock-add"><?= icon('plus') ?> <?= e(L('Add another vehicle', 'Agregar otro vehículo')) ?></div>
         </div>
       </div>
       <div class="mock-float">
         <span class="mock-avs"><i>A</i><i>R</i><i>K</i></span>
-        <div><b>3 drivers</b><small>2 vehicles · Ready to send</small></div>
+        <div><b><?= e(L('3 drivers', '3 conductores')) ?></b><small><?= e(L('2 vehicles · Ready to send', '2 vehículos · Lista para enviar')) ?></small></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============ STATS ============ -->
-<section class="stats" aria-label="At a glance">
+<section class="stats" aria-label="<?= e(L('At a glance', 'En resumen')) ?>">
   <div class="wrap stats-grid">
-    <div class="stat reveal"><b><span data-count="3">0</span> min</b><span>to request a quote</span></div>
-    <div class="stat reveal"><b><span data-count="6">0</span></b><span>coverage options to choose from</span></div>
-    <div class="stat reveal"><b><span data-count="1">0</span> day</b><span>typical response time</span></div>
-    <div class="stat reveal"><b><span data-count="256">0</span>-bit</b><span>encryption for sensitive data</span></div>
+    <div class="stat reveal"><b><span data-count="<?= (int) cfg('site.years') ?>">0</span>+</b><span><?= e(L('years serving Austin', 'años sirviendo a Austin')) ?></span></div>
+    <div class="stat reveal"><b><span data-count="<?= (int) cfg('site.carriers') ?>">0</span>+</b><span><?= e(L('insurance companies compared', 'compañías de seguros comparadas')) ?></span></div>
+    <div class="stat reveal"><b><span data-count="<?= count(offices()) ?>">0</span></b><span><?= e(L('offices across Austin', 'oficinas en Austin')) ?></span></div>
+    <div class="stat reveal"><b><span data-count="2">0</span></b><span><?= e(L('languages: English & Spanish', 'idiomas: inglés y español')) ?></span></div>
   </div>
 </section>
 
-<!-- ============ CHECKLIST ============ -->
-<section class="section" aria-labelledby="readyTitle">
-  <div class="wrap ready">
-    <div class="ready-art reveal" aria-hidden="true">
-      <svg viewBox="0 0 360 320">
-        <rect x="40" y="40" width="250" height="250" rx="28" fill="var(--brand-100)"/>
-        <rect x="70" y="20" width="250" height="250" rx="28" fill="#fff" stroke="var(--line)" stroke-width="2"/>
-        <rect x="150" y="6" width="90" height="30" rx="12" fill="var(--navy-900)"/>
-        <g class="ready-rows">
-          <g><rect x="100" y="70" width="26" height="26" rx="8" fill="var(--brand-500)"/><path d="m106 83 5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="140" y="76" width="140" height="12" rx="6" fill="var(--sand-200)"/></g>
-          <g><rect x="100" y="120" width="26" height="26" rx="8" fill="var(--brand-500)"/><path d="m106 133 5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="140" y="126" width="110" height="12" rx="6" fill="var(--sand-200)"/></g>
-          <g><rect x="100" y="170" width="26" height="26" rx="8" fill="var(--brand-500)"/><path d="m106 183 5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="140" y="176" width="126" height="12" rx="6" fill="var(--sand-200)"/></g>
-          <g><rect x="100" y="220" width="26" height="26" rx="8" fill="var(--amber-400)"/><path d="m106 233 5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="140" y="226" width="92" height="12" rx="6" fill="var(--sand-200)"/></g>
-        </g>
-      </svg>
-    </div>
-    <div class="reveal">
-      <p class="eyebrow">Before you start</p>
-      <h2 id="readyTitle">Have these handy for the fastest quote</h2>
-      <ul class="ready-list">
-        <li><?= icon('user') ?><div><b>Your details</b>Name, date of birth, address, phone and email.</div></li>
-        <li><?= icon('id') ?><div><b>Each driver's license</b>US or foreign license, issuing state or country and license number.</div></li>
-        <li><?= icon('car') ?><div><b>Each vehicle's VIN</b>On the dashboard, door jamb, registration or insurance card.</div></li>
-        <li><?= icon('shield') ?><div><b>Your current policy (optional)</b>Helps us compare like for like and find savings.</div></li>
-      </ul>
+<!-- ============ LOCATIONS ============ -->
+<section class="section" aria-labelledby="locTitle">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="eyebrow"><?= e(L('Visit us', 'Visítanos')) ?></p>
+      <h2 id="locTitle"><?= e(L('4 offices across Austin, open 7 days a week', '4 oficinas en Austin, abiertas los 7 días')) ?></h2>
+      <p><?= e(L('Walk in for title and registration services, or to talk to an agent face to face.', 'Ven a tramitar títulos y registro, o a hablar en persona con un agente.')) ?></p>
+    </header>
+    <div class="loc-grid">
+      <?php foreach (offices() as $o): ?>
+      <article class="loc-card reveal" data-office-hours="<?= e(office_hours_js($o)) ?>">
+        <div class="loc-top">
+          <span class="loc-ic"><?= icon('pin') ?></span>
+          <span class="open-badge" data-open-badge hidden></span>
+        </div>
+        <h3><?= e($o['name']) ?></h3>
+        <p class="loc-addr"><?= e($o['street']) ?><br><?= e($o['city'] . ', ' . $o['state'] . ' ' . $o['zip']) ?></p>
+        <dl class="loc-hours">
+          <?php foreach (office_hours_rows($o) as [$d, $h]): ?><div><dt><?= e($d) ?></dt><dd><?= e($h) ?></dd></div><?php endforeach; ?>
+        </dl>
+        <a class="cov-more" href="<?= e(maps_link($o)) ?>" target="_blank" rel="noopener"><?= icon('directions') ?> <?= e(L('Get directions', 'Cómo llegar')) ?></a>
+      </article>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -283,15 +324,14 @@ require APP_ROOT . '/partials/header.php';
 <section class="section section-tint" aria-labelledby="faqTitle">
   <div class="wrap faq-wrap">
     <header class="section-head reveal">
-      <p class="eyebrow">Questions</p>
-      <h2 id="faqTitle">Good to know</h2>
-      <p>More answers on our <a href="<?= e(url('coverage')) ?>#faq">coverage page</a>, or just <a href="<?= e(url('contact')) ?>">ask us</a>.</p>
+      <p class="eyebrow"><?= e(L('Questions', 'Preguntas')) ?></p>
+      <h2 id="faqTitle"><?= e(L('Good to know', 'Bueno saber')) ?></h2>
+      <p><?= e(L('More answers on our', 'Más respuestas en nuestra página de')) ?> <a href="<?= e(lurl('auto-insurance')) ?>#faq"><?= e(L('auto insurance page', 'seguro de auto')) ?></a>, <?= e(L('or just', 'o simplemente')) ?> <a href="<?= e(lurl('contact')) ?>"><?= e(L('ask us', 'pregúntanos')) ?></a>.</p>
     </header>
     <div class="faq reveal">
-      <details><summary>Does requesting a quote cost anything?<?= icon('chevron-down') ?></summary><div><p>No. Quotes are free and there's no obligation to buy. You'll get options and can decide in your own time.</p></div></details>
-      <details><summary>Can I add drivers with a foreign license?<?= icon('chevron-down') ?></summary><div><p>Yes. For each driver, choose "Foreign license", enter the issuing country and license number. Your agent will find carriers that accept it.</p></div></details>
-      <details><summary>Is my personal information safe?<?= icon('chevron-down') ?></summary><div><p>Your request is sent over an encrypted connection, license numbers are encrypted when stored, and only your agent can see them. We never sell your information.</p></div></details>
-      <details><summary>What if I don't know my VIN?<?= icon('chevron-down') ?></summary><div><p>Check the driver-side dashboard, the sticker inside the driver's door, or your registration or insurance card. If you're stuck, call us and we'll help.</p></div></details>
+      <?php foreach ($faqs as [$q, $a]): ?>
+      <details><summary><?= e($q) ?><?= icon('chevron-down') ?></summary><div><p><?= e($a) ?></p></div></details>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>

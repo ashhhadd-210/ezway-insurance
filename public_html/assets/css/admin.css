@@ -307,3 +307,19 @@ h1, h2 { font-family: var(--display); letter-spacing: -.02em; margin: 0; line-he
   .a-side-foot a[target="_blank"] { display: none; }
   .a-logo-img { height: 26px; }
 }
+
+/* Services & language */
+.svc-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; white-space: nowrap; background: var(--brand-50, #F1F4FE); color: var(--brand-700, #222E7A); border: 1px solid var(--brand-100, #E2E8FB); font-family: var(--font); letter-spacing: 0; }
+.svc-pill .i { width: 14px; height: 14px; }
+.svc-commercial_auto { background: #1B2463; color: #fff; border-color: #1B2463; }
+.svc-home { background: #E8F7EF; color: #0B6B42; border-color: #BFE8D2; }
+.svc-business { background: #FFF1D9; color: #8A5308; border-color: #F7D9A6; }
+.svc-bonds { background: #EFEBFD; color: #5B3FC4; border-color: #DCD3FB; }
+.svc-title { background: #E6F4FA; color: #0E6A8A; border-color: #C5E6F2; }
+.svc-llc { background: #F2F4F9; color: #475174; border-color: #DFE4EE; }
+.a-lang { display: inline-block; padding: 1px 6px; border-radius: 6px; background: #FFF1D9; color: #8A5308; font-size: .7rem; font-weight: 800; letter-spacing: .04em; vertical-align: 1px; }
+.a-lang-lg { padding: 4px 10px; border-radius: 999px; font-size: .78rem; }
+.a-meta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.a-flash-info { background: #FFF1D9; color: #7A4B06; border: 1px solid #F7D9A6; }
+.a-chips a .i { width: 15px; height: 15px; }
+.a-chips + .a-chips { margin-top: -6px; }

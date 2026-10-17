@@ -4,31 +4,45 @@ require __DIR__ . '/app/bootstrap.php';
 $page = [
     'slug'        => 'about',
     'path'        => 'about',
-    'title'       => 'About us',
-    'description' => 'Meet ' . cfg('site.name') . ': a licensed local insurance agency that compares coverage for you, explains it in plain English and stays with you at claim time.',
+    'title'       => L('About us', 'Nosotros'),
+    'description' => L(
+        'EZ Way Insurance: a licensed Texas agency with 4 offices in Austin, 10+ years of experience and 20+ insurance companies. We speak English and Spanish and accept any type of ID.',
+        'EZ Way Insurance: agencia con licencia en Texas, 4 oficinas en Austin, más de 10 años de experiencia y más de 20 compañías de seguros. Hablamos inglés y español y aceptamos cualquier tipo de ID.'
+    ),
 ];
+$years = (int) cfg('site.years');
+$carriers = (int) cfg('site.carriers');
 require APP_ROOT . '/partials/header.php';
 ?>
 
 <section class="page-hero">
   <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="grid-lines"></span><?= pinwheel_svg('pinwheel page-pin') ?></div>
   <div class="wrap page-hero-in">
-    <p class="pill reveal"><span class="pill-dot"></span>About us</p>
-    <h1 class="reveal">A local agency with a simple promise: <span class="text-teal">we've got your back.</span></h1>
-    <p class="lead reveal">We started <?= e(cfg('site.name')) ?> because buying car insurance shouldn't feel like a puzzle. You tell us what you need once, and we do the comparing, the explaining and the follow-up.</p>
+    <p class="pill reveal"><span class="pill-dot"></span><?= e(L('About us', 'Nosotros')) ?></p>
+    <h1 class="reveal"><?= e(L('Austin\'s easy way to get insured.', 'La forma fácil de asegurarte en Austin.')) ?> <span class="text-teal"><?= e(L('For ' . $years . '+ years.', 'Desde hace más de ' . $years . ' años.')) ?></span></h1>
+    <p class="lead reveal"><?= e(L(
+        'We started EZ Way so buying insurance wouldn\'t feel complicated. You tell us what you need once, and we do the comparing, the explaining and the follow-up, in English or Spanish.',
+        'Creamos EZ Way para que comprar seguro no fuera complicado. Nos dices qué necesitas una vez, y nosotros comparamos, te explicamos y damos seguimiento, en inglés o en español.'
+    )) ?></p>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap split">
     <div class="reveal">
-      <p class="eyebrow">Our story</p>
-      <h2>Real people, real advice, right here in <?= e(cfg('site.address.city')) ?>.</h2>
-      <p>As an independent agency, we don't work for one insurance company. We work for you. That means we can compare coverage from several carriers and recommend what actually fits your household, your vehicles and your budget.</p>
-      <p>Whether you're insuring your first car, adding a teen driver, or driving with a license from another country, we'll find options that work and explain them without the jargon.</p>
+      <p class="eyebrow"><?= e(L('Our story', 'Nuestra historia')) ?></p>
+      <h2><?= e(L('Real people, real advice, right here in Austin.', 'Gente real, consejos reales, aquí en Austin.')) ?></h2>
+      <p><?= e(L(
+          'For more than ' . $years . ' years, families, drivers and business owners across Austin have trusted us with their insurance and their paperwork. Today we serve them from 4 offices: Cameron Rd, William Cannon, North Lamar and Howard Ln.',
+          'Por más de ' . $years . ' años, familias, conductores y dueños de negocios en Austin nos han confiado sus seguros y sus trámites. Hoy los atendemos en 4 oficinas: Cameron Rd, William Cannon, North Lamar y Howard Ln.'
+      )) ?></p>
+      <p><?= e(L(
+          'As an independent agency we work with ' . $carriers . '+ insurance companies, so we can shop around and find what fits your budget, whether it\'s your first car, a work truck, your home or your business. No license? No problem: we accept any type of ID.',
+          'Como agencia independiente trabajamos con más de ' . $carriers . ' compañías de seguros, así que comparamos y encontramos lo que se ajusta a tu presupuesto: tu primer auto, una troca de trabajo, tu casa o tu negocio. ¿Sin licencia? No hay problema: aceptamos cualquier tipo de ID.'
+      )) ?></p>
       <div class="split-actions">
-        <button class="btn btn-primary" type="button" data-quote>Start your quote <?= icon('arrow-right') ?></button>
-        <a class="btn btn-ghost" href="<?= e(url('contact')) ?>">Contact us</a>
+        <button class="btn btn-primary" type="button" data-quote><?= e(L('Start your quote', 'Empieza tu cotización')) ?> <?= icon('arrow-right') ?></button>
+        <a class="btn btn-ghost" href="<?= e(lurl('contact')) ?>"><?= icon('pin') ?> <?= e(L('Find an office', 'Encuentra una oficina')) ?></a>
       </div>
     </div>
     <div class="about-art reveal" aria-hidden="true">
@@ -71,17 +85,26 @@ require APP_ROOT . '/partials/header.php';
   </div>
 </section>
 
+<section class="stats" aria-label="<?= e(L('At a glance', 'En resumen')) ?>">
+  <div class="wrap stats-grid">
+    <div class="stat reveal"><b><span data-count="<?= $years ?>">0</span>+</b><span><?= e(L('years in business', 'años de experiencia')) ?></span></div>
+    <div class="stat reveal"><b><span data-count="<?= $carriers ?>">0</span>+</b><span><?= e(L('insurance companies', 'compañías de seguros')) ?></span></div>
+    <div class="stat reveal"><b><span data-count="<?= count(offices()) ?>">0</span></b><span><?= e(L('Austin offices', 'oficinas en Austin')) ?></span></div>
+    <div class="stat reveal"><b><span data-count="7">0</span></b><span><?= e(L('services under one roof', 'servicios en un solo lugar')) ?></span></div>
+  </div>
+</section>
+
 <section class="section section-tint" aria-labelledby="valTitle">
   <div class="wrap">
     <header class="section-head reveal">
-      <p class="eyebrow">What we stand for</p>
-      <h2 id="valTitle">The way insurance should feel</h2>
+      <p class="eyebrow"><?= e(L('What we stand for', 'Lo que nos distingue')) ?></p>
+      <h2 id="valTitle"><?= e(L('The way insurance should feel', 'Así debería sentirse el seguro')) ?></h2>
     </header>
     <div class="val-grid">
-      <article class="val reveal"><span class="val-ic"><?= icon('search') ?></span><h3>We shop, you save</h3><p>We compare options from multiple carriers so you don't have to fill out form after form.</p></article>
-      <article class="val reveal"><span class="val-ic"><?= icon('chat') ?></span><h3>Plain answers</h3><p>No jargon and no fine-print surprises. We explain what you're paying for and why.</p></article>
-      <article class="val reveal"><span class="val-ic"><?= icon('users') ?></span><h3>Every driver welcome</h3><p>New drivers, teen drivers, and drivers with US or foreign licenses. We'll find you a fit.</p></article>
-      <article class="val reveal"><span class="val-ic"><?= icon('shield') ?></span><h3>Here at claim time</h3><p>When something happens, you call a person who knows you, not a call center.</p></article>
+      <article class="val reveal"><span class="val-ic"><?= icon('search') ?></span><h3><?= e(L('We shop, you save', 'Comparamos, tú ahorras')) ?></h3><p><?= e(L('We compare ' . $carriers . '+ companies so you don\'t have to fill out form after form.', 'Comparamos más de ' . $carriers . ' compañías para que no tengas que llenar formulario tras formulario.')) ?></p></article>
+      <article class="val reveal"><span class="val-ic"><?= icon('language') ?></span><h3><?= e(L('Your language', 'Tu idioma')) ?></h3><p><?= e(L('We explain everything in English or Spanish, with no jargon and no surprises.', 'Te explicamos todo en inglés o en español, sin palabras complicadas ni sorpresas.')) ?></p></article>
+      <article class="val reveal"><span class="val-ic"><?= icon('id') ?></span><h3><?= e(L('Every driver welcome', 'Todos son bienvenidos')) ?></h3><p><?= e(L('US license, foreign license, passport or matrícula. We\'ll find you a fit.', 'Licencia de EE. UU., extranjera, pasaporte o matrícula. Te encontramos una opción.')) ?></p></article>
+      <article class="val reveal"><span class="val-ic"><?= icon('shield') ?></span><h3><?= e(L('Here when it counts', 'Aquí cuando más importa')) ?></h3><p><?= e(L('When something happens, you call a local person who knows you, not a call center.', 'Cuando algo pasa, llamas a una persona local que te conoce, no a un call center.')) ?></p></article>
     </div>
   </div>
 </section>
@@ -89,14 +112,14 @@ require APP_ROOT . '/partials/header.php';
 <section class="section" aria-labelledby="flowTitle">
   <div class="wrap">
     <header class="section-head reveal">
-      <p class="eyebrow">How we work</p>
-      <h2 id="flowTitle">What happens after you request a quote</h2>
+      <p class="eyebrow"><?= e(L('How we work', 'Cómo trabajamos')) ?></p>
+      <h2 id="flowTitle"><?= e(L('What happens after you request a quote', 'Qué pasa después de pedir tu cotización')) ?></h2>
     </header>
     <ol class="timeline">
-      <li class="reveal"><span class="tl-dot"><?= icon('doc') ?></span><div><h3>You send your request</h3><p>Every driver and vehicle in one form, in about three minutes.</p></div></li>
-      <li class="reveal"><span class="tl-dot"><?= icon('search') ?></span><div><h3>We compare carriers</h3><p>Your agent checks rates and coverage across the companies we work with.</p></div></li>
-      <li class="reveal"><span class="tl-dot"><?= icon('phone') ?></span><div><h3>We walk you through it</h3><p>We reach out by phone, text or email, whichever you prefer, and explain your options.</p></div></li>
-      <li class="reveal"><span class="tl-dot"><?= icon('shield') ?></span><div><h3>You're covered, and we stay close</h3><p>Need to add a car, change coverage or file a claim? We're one call away.</p></div></li>
+      <li class="reveal"><span class="tl-dot"><?= icon('doc') ?></span><div><h3><?= e(L('You send your request', 'Envías tu solicitud')) ?></h3><p><?= e(L('Online in about three minutes, by phone, or at any of our offices.', 'En línea en unos tres minutos, por teléfono o en cualquiera de nuestras oficinas.')) ?></p></div></li>
+      <li class="reveal"><span class="tl-dot"><?= icon('search') ?></span><div><h3><?= e(L('We compare companies', 'Comparamos compañías')) ?></h3><p><?= e(L('Your agent checks prices and coverage across ' . $carriers . '+ insurance companies.', 'Tu agente revisa precios y coberturas en más de ' . $carriers . ' compañías.')) ?></p></div></li>
+      <li class="reveal"><span class="tl-dot"><?= icon('phone') ?></span><div><h3><?= e(L('We walk you through it', 'Te explicamos todo')) ?></h3><p><?= e(L('We reach out by phone, text or email, whichever you prefer, and explain your options.', 'Te contactamos por teléfono, mensaje o correo, como prefieras, y te explicamos tus opciones.')) ?></p></div></li>
+      <li class="reveal"><span class="tl-dot"><?= icon('shield') ?></span><div><h3><?= e(L('You\'re covered, and we stay close', 'Quedas protegido, y seguimos cerca')) ?></h3><p><?= e(L('Need to add a car, renew plates or file a claim? We\'re one call or one visit away.', '¿Necesitas agregar un auto, renovar placas o hacer un reclamo? Estamos a una llamada o una visita.')) ?></p></div></li>
     </ol>
   </div>
 </section>

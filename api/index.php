@@ -25,6 +25,15 @@ if (preg_match('#^/(app|storage)(/|$)|/\.(?!well-known/)|^/api/index\.php#', $pa
     exit('Forbidden');
 }
 
+// Old Coverage page is now Auto insurance
+if (preg_match("#^(/es)?/coverage/?$#", $path, $m)) {
+    header("Location: " . ($m[1] ?? "") . "/auto-insurance", true, 301);
+    exit;
+}
+// Spanish pages use the same files: /es/about -> about.php (the language is read from the URL)
+if (preg_match("#^/es(/.*)?$#", $path, $m)) {
+    $path = ($m[1] ?? "") === "" ? "/" : $m[1];
+}
 $aliases = ['/sitemap.xml' => '/sitemap.php', '/robots.txt' => '/robots.php'];
 $target = null;
 if (isset($aliases[$path])) {

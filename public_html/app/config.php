@@ -12,31 +12,56 @@ return [
     // Turn on only while debugging. Never leave on in production.
     'debug' => false,
 
-    'timezone' => 'America/New_York',
+    'timezone' => 'America/Chicago',   // Austin, TX
 
     // ---------------------------------------------------------------------
-    // Agency details (used across every page, in emails and for SEO)
+    // Agency details (used across every page, in emails and for SEO).
+    // Text with 'en' and 'es' keys is shown in the visitor's language.
     // ---------------------------------------------------------------------
     'site' => [
         'name'        => 'EZ Way Insurance',
-        'legal_name'  => 'EZ Way Insurance',             // CHANGE ME to the registered business name
-        'tagline'     => 'Auto insurance, made EZ',
-        'description' => 'Get a fast, no-obligation auto insurance quote. Add every driver and vehicle in one simple form and a licensed agent will get back to you with coverage options that fit.',
-        // Full public URL with no trailing slash, e.g. https://www.youragency.com
+        'legal_name'  => 'EZ Way Insurance LLC',
+        'tagline'     => [
+            'en' => 'Insurance & auto services, made EZ',
+            'es' => 'Seguros y servicios de auto, fácil',
+        ],
+        'description' => [
+            'en' => 'Car, home and business insurance from 20+ companies, plus title, plates and registration services. 4 offices in Austin, TX. Se habla español. Any type of ID accepted.',
+            'es' => 'Seguros de auto, casa y negocio con más de 20 compañías, además de títulos, placas y registro. 4 oficinas en Austin, TX. Aceptamos cualquier tipo de ID.',
+        ],
+        // Full public URL with no trailing slash, e.g. https://www.ezwayinsurance.com
         // Leave empty to detect automatically.
         'url'         => '',
-        'phone'       => '(555) 010-2030',               // CHANGE ME
-        'email'       => 'hello@youragency.com',         // CHANGE ME
-        'address'     => [
-            'street' => '123 Main Street, Suite 200',    // CHANGE ME
-            'city'   => 'Houston',
-            'state'  => 'TX',
-            'zip'    => '77002',
-        ],
-        'hours' => [
-            ['Mon – Fri', '9:00 AM – 6:00 PM'],
-            ['Saturday',  '10:00 AM – 2:00 PM'],
-            ['Sunday',    'Closed'],
+        'phone'       => '(512) 679-2682',
+        'email'       => 'ezwayuw@gmail.com',
+        'license'     => '',          // Texas agency license number; shown in the footer when set
+        'licensed_in' => 'Texas',
+        'years'       => 10,          // "10+ years"
+        'carriers'    => 20,          // "20+ insurance companies"
+
+        // Offices. The first one is the main office (used for SEO and emails).
+        // Hours use 24h time; null means closed that day.
+        'offices' => [
+            [
+                'key' => 'cameron', 'name' => 'Cameron Rd',
+                'street' => '7901 Cameron Rd, Ste 5D', 'city' => 'Austin', 'state' => 'TX', 'zip' => '78754',
+                'hours' => ['weekdays' => ['09:00', '19:30'], 'sat' => ['10:00', '18:00'], 'sun' => ['10:00', '17:00']],
+            ],
+            [
+                'key' => 'cannon', 'name' => 'William Cannon',
+                'street' => '2004 E William Cannon Dr, Ste 105', 'city' => 'Austin', 'state' => 'TX', 'zip' => '78744',
+                'hours' => ['weekdays' => ['09:00', '19:00'], 'sat' => ['10:00', '18:00'], 'sun' => null],
+            ],
+            [
+                'key' => 'lamar', 'name' => 'North Lamar',
+                'street' => '9515 N Lamar Blvd, Ste 112', 'city' => 'Austin', 'state' => 'TX', 'zip' => '78753',
+                'hours' => ['weekdays' => ['09:00', '19:00'], 'sat' => ['10:00', '18:00'], 'sun' => null],
+            ],
+            [
+                'key' => 'howard', 'name' => 'Howard Ln',
+                'street' => '1200 W Howard Ln, Ste N', 'city' => 'Austin', 'state' => 'TX', 'zip' => '78753',
+                'hours' => ['weekdays' => ['09:00', '19:00'], 'sat' => ['10:00', '18:00'], 'sun' => null],
+            ],
         ],
         // Logo files inside /assets/img. Leave empty to use a built-in shield and the name.
         'logo'        => 'logo.png',        // full logo for light backgrounds
@@ -69,11 +94,11 @@ return [
     // ---------------------------------------------------------------------
     'mail' => [
         // Where new quote requests and contact messages are sent.
-        'notify_to'   => 'hello@youragency.com',         // CHANGE ME
+        'notify_to'   => 'ezwayuw@gmail.com',
         // Sender address. Use an address on the site's own domain
         // (create it in cPanel > Email Accounts) so mail isn't flagged as spam.
-        'from'        => 'no-reply@youragency.com',      // CHANGE ME
-        'from_name'   => 'Your Agency Website',
+        'from'        => 'no-reply@yourdomain.com',      // CHANGE ME once the domain is known
+        'from_name'   => 'EZ Way Insurance',
         // Send the customer a "we got your request" email.
         'confirm_customer' => true,
 
@@ -97,7 +122,7 @@ return [
     'security' => [
         'turnstile_site_key'   => '',
         'turnstile_secret_key' => '',
-        'max_quotes_per_hour'  => 5,       // per visitor
+        'max_quotes_per_hour'  => 5,        // per visitor
         'max_messages_per_hour'=> 5,       // per visitor
     ],
 

@@ -21,9 +21,11 @@ ini_set('log_errors', '1');
 ini_set('error_log', STORAGE . '/error.log');
 
 require APP_ROOT . '/lib/helpers.php';
+require APP_ROOT . '/lib/i18n.php';
 require APP_ROOT . '/lib/db.php';
 require APP_ROOT . '/lib/crypto.php';
 require APP_ROOT . '/lib/security.php';
 require APP_ROOT . '/lib/mailer.php';
 require APP_ROOT . '/lib/vin.php';
+require APP_ROOT . '/lib/content.php';
 require APP_ROOT . '/lib/quote.php';

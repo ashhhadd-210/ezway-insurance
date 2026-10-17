@@ -4,6 +4,14 @@
   'use strict';
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var I18N = {};
+  try { I18N = JSON.parse(document.getElementById('i18n').textContent); } catch (e) {}
+  function T(key, vars) {
+    var v = key.split('.').reduce(function (o, k) { return o && o[k]; }, I18N);
+    v = v == null ? key : String(v);
+    if (vars) Object.keys(vars).forEach(function (k) { v = v.replace('{' + k + '}', vars[k]); });
+    return v;
+  }
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
@@ -56,7 +64,7 @@
   function setDrawer(open) {
     if (!drawer) return;
     burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    burger.setAttribute('aria-label', burger.getAttribute(open ? 'data-label-close' : 'data-label-open'));
     drawer.hidden = !open;
   }
   if (burger) {
@@ -221,11 +229,11 @@
       var zip = zipForm.zip.value.trim();
       if (zip && !/^\d{5}$/.test(zip)) {
         zipForm.classList.remove('is-bad'); void zipForm.offsetWidth; zipForm.classList.add('is-bad');
-        toast('Please enter a 5-digit ZIP code.');
+        toast(T('zipBad'));
         zipForm.zip.focus();
         return;
       }
-      if (window.QuoteWizard) window.QuoteWizard.open({ zip: zip });
+      if (window.QuoteWizard) window.QuoteWizard.open({ zip: zip, service: zipForm.getAttribute('data-service') || '' });
     });
   }
 
@@ -258,10 +266,10 @@
     cform.addEventListener('submit', function (e) {
       e.preventDefault();
       var f = cform.elements, errs = {};
-      if (f.name.value.trim().length < 2) errs.name = 'Enter your name.';
-      if (!/^\S+@\S+\.\S{2,}$/.test(f.email.value.trim())) errs.email = 'Enter a valid email address.';
-      if (f.phone.value && f.phone.value.replace(/\D/g, '').length !== 10) errs.phone = 'Enter a 10-digit phone number, or leave it blank.';
-      if (f.message.value.trim().length < 10) errs.message = 'Tell us a little more (at least 10 characters).';
+      if (f.name.value.trim().length < 2) errs.name = T('err.name');
+      if (!/^\S+@\S+\.\S{2,}$/.test(f.email.value.trim())) errs.email = T('err.email');
+      if (f.phone.value && f.phone.value.replace(/\D/g, '').length !== 10) errs.phone = T('err.phoneOpt');
+      if (f.message.value.trim().length < 10) errs.message = T('err.message');
       ['name', 'email', 'phone', 'message'].forEach(function (n) { showErr(n, errs[n]); });
       var first = Object.keys(errs)[0];
       if (first) { f[first].focus(); return; }
@@ -275,7 +283,7 @@
           token: cform.getAttribute('data-token'),
           website: f.website.value,
           turnstile: tsId !== null && window.turnstile ? window.turnstile.getResponse(tsId) : '',
-          name: f.name.value, email: f.email.value, phone: f.phone.value, topic: f.topic.value, message: f.message.value
+          lang: document.documentElement.lang, name: f.name.value, email: f.email.value, phone: f.phone.value, topic: f.topic.value, message: f.message.value
         })
       }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
         .then(function (res) {
@@ -285,13 +293,64 @@
             return;
           }
           if (res.errors) Object.keys(res.errors).forEach(function (n) { showErr(n, res.errors[n]); });
-          toast(res.error || 'Something went wrong. Please try again.');
+          toast(res.error || T('serverError'));
           if (tsId !== null && window.turnstile) window.turnstile.reset(tsId);
         })
-        .catch(function () { toast('Network error. Please check your connection and try again.'); })
+        .catch(function () { toast(T('network')); })
         .then(function () { btn.classList.remove('is-loading'); btn.disabled = false; });
     });
   }
+
+  /* ---------- Offices: live "Open now" badges (Austin time) ---------- */
+  function austinNow() {
+    var map = {};
+    new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+      .formatToParts(new Date()).forEach(function (p) { map[p.type] = p.value; });
+    var days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    return { day: days[map.weekday], mins: (+map.hour % 24) * 60 + (+map.minute) };
+  }
+  function toMin(s) { var p = s.split(':'); return +p[0] * 60 + (+p[1]); }
+  function fmtTime(s) {
+    var p = s.split(':'), h = +p[0], m = +p[1];
+    return (h % 12 || 12) + (m ? ':' + String(m).padStart(2, '0') : '') + ' ' + (h >= 12 ? T('pm') : T('am'));
+  }
+  function officeStatus(hours) {
+    var now = austinNow(), today = hours[now.day];
+    if (today && now.mins >= toMin(today[0]) && now.mins < toMin(today[1])) {
+      return { open: true, text: T('openNow') + ' · ' + T('closesAt', { t: fmtTime(today[1]) }) };
+    }
+    if (today && now.mins < toMin(today[0])) {
+      return { open: false, text: T('closedNow') + ' · ' + T('opensToday', { t: fmtTime(today[0]) }) };
+    }
+    for (var i = 1; i <= 7; i++) {
+      var d = (now.day + i) % 7, h = hours[d];
+      if (h) return { open: false, text: T('closedNow') + ' · ' + T('opensAt', { d: i === 1 ? T('tomorrow') : (I18N.days || [])[d], t: fmtTime(h[0]) }) };
+    }
+    return { open: false, text: T('closedNow') };
+  }
+  function paintOffices() {
+    $$('[data-office-hours]').forEach(function (el) {
+      var badge = $('[data-open-badge]', el);
+      if (!badge) return;
+      try {
+        var st = officeStatus(JSON.parse(el.getAttribute('data-office-hours')));
+        badge.textContent = st.text;
+        badge.classList.toggle('is-open', st.open);
+        badge.hidden = false;
+      } catch (e) { /* Intl not available: hours table still shows */ }
+    });
+  }
+  paintOffices();
+  setInterval(paintOffices, 60000);
+
+  /* ---------- Locations page: switch the map between offices ---------- */
+  var mapFrame = $('[data-map-frame]');
+  $$('[data-map-tab]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      $$('[data-map-tab]').forEach(function (t) { t.setAttribute('aria-selected', String(t === tab)); });
+      if (mapFrame) mapFrame.src = tab.getAttribute('data-map-tab');
+    });
+  });
 
   window.Site = { toast: toast, renderTurnstile: renderTurnstile, reduceMotion: reduceMotion };
 })();

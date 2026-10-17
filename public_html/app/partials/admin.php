@@ -16,7 +16,7 @@ function admin_head(string $title, string $active = '', bool $bare = false): voi
     $admin = $bare ? null : current_admin();
     $counts = $bare ? [] : admin_counts();
     $nav = [
-        'quotes'   => ['Quote requests', 'admin/', 'inbox', $counts['new_quotes'] ?? 0],
+        'quotes'   => ['Requests', 'admin/', 'inbox', $counts['new_quotes'] ?? 0],
         'messages' => ['Messages', 'admin/messages.php', 'chat', $counts['unread_messages'] ?? 0],
         'account'  => ['Account', 'admin/account.php', 'settings', 0],
     ];
@@ -89,4 +89,10 @@ function pager(int $page, int $pages, array $query): string
         $out .= $link($p, (string) $p, false, $p === $page);
     }
     return $out . $link($page + 1, 'Next →', $page >= $pages) . '</nav>';
+}
+
+function service_pill(?string $key): string
+{
+    $s = service((string) $key) ?? service('personal_auto');
+    return '<span class="svc-pill svc-' . e((string) $key) . '">' . icon($s['icon']) . e($s['title']) . '</span>';
 }

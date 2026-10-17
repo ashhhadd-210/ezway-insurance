@@ -47,5 +47,17 @@
     <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/></symbol>
     <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h4.5l3.5 3.5V16h-8z"/><circle cx="6" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5Z"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></symbol>
+    <symbol id="i-seal" viewBox="0 0 24 24"><circle cx="12" cy="10" r="6"/><path d="m9 15-2 6 5-2.5 5 2.5-2-6"/><path d="m9.5 10 1.8 1.8 3.2-3.3"/></symbol>
+    <symbol id="i-plate" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2.5"/><path d="M6 10h3M6 14h5M14 10h4M14 14h4"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h3a1 1 0 0 1 1 1v11M2 21h20"/><path d="M8 7h.01M12 7h.01M8 11h.01M12 11h.01M8 15h.01M12 15h.01"/></symbol>
+    <symbol id="i-hardhat" viewBox="0 0 24 24"><path d="M3 17h18M4 17a8 8 0 0 1 16 0M10 9V5.5a2 2 0 0 1 4 0V9"/><path d="M3 17v2h18v-2"/></symbol>
+    <symbol id="i-tool" viewBox="0 0 24 24"><path d="m14 7 3-3 3 3-3 3M17 7 7 17M4 20l3-3"/><path d="M4 4l5 5M6 8 8 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.7-4.3L4 8M4 4v4h4M4 13a8 8 0 0 0 14.7 4.3L20 16M20 20v-4h-4"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></symbol>
+    <symbol id="i-language" viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 5c.8 3.6 3.2 6.4 6 8M11 5c-.8 3.6-3.6 6.6-7 8.5"/><path d="m13 21 4-9 4 9M14.4 18h5.2"/></symbol>
+    <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.5 21.5 12 12 21.5 2.5 12 12 2.5Z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15M13 8l2 2-2 2"/></symbol>
   </defs>
 </svg>
