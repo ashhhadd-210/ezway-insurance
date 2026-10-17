@@ -34,7 +34,6 @@ foreach (offices() as $o) {
         'logo'      => site_url('assets/img/logo.png'),
         'image'     => site_url('assets/img/og-image.png'),
         'telephone' => cfg('site.phone'),
-        'email'     => cfg('site.email'),
         'priceRange'=> '$$',
         'knowsLanguage' => ['en', 'es'],
         'areaServed'=> ['@type' => 'State', 'name' => 'Texas'],

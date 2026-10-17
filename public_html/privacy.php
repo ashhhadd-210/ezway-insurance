@@ -52,10 +52,10 @@ require APP_ROOT . '/partials/header.php';
     <p><?= e(L('We keep requests and messages only as long as needed to serve you and to meet legal and regulatory requirements, then delete them.', 'Guardamos las solicitudes y mensajes solo el tiempo necesario para atenderte y cumplir con la ley, y después los borramos.')) ?></p>
 
     <h2><?= e(L('Your choices', 'Tus opciones')) ?></h2>
-    <p><?= e(L('You can ask us to access, correct or delete your information at any time by contacting us at', 'Puedes pedirnos ver, corregir o borrar tu información en cualquier momento escribiendo a')) ?> <a href="mailto:<?= e(cfg('site.email')) ?>"><?= e(cfg('site.email')) ?></a> <?= e(L('or', 'o llamando al')) ?> <a href="<?= e(tel_href(cfg('site.phone'))) ?>"><?= e(cfg('site.phone')) ?></a>. <?= e(L('You can opt out of marketing messages at any time; for texts, reply STOP.', 'Puedes dejar de recibir mensajes de promoción cuando quieras; para mensajes de texto, responde STOP.')) ?></p>
+    <p><?= e(L('You can ask us to access, correct or delete your information at any time by calling us at', 'Puedes pedirnos ver, corregir o borrar tu información en cualquier momento llamando al')) ?> <a href="<?= e(tel_href(cfg('site.phone'))) ?>"><?= e(cfg('site.phone')) ?></a>, <?= e(L('sending us a message from our contact page or visiting any of our offices.', 'enviándonos un mensaje desde la página de contacto o visitando cualquiera de nuestras oficinas.')) ?> <?= e(L('You can opt out of marketing messages at any time; for texts, reply STOP.', 'Puedes dejar de recibir mensajes de promoción cuando quieras; para mensajes de texto, responde STOP.')) ?></p>
 
     <h2><?= e(L('Contact', 'Contacto')) ?></h2>
-    <p><?= e($legal) ?><br><?= e(full_address()) ?><br><?= e(cfg('site.phone')) ?> · <?= e(cfg('site.email')) ?></p>
+    <p><?= e($legal) ?><br><?= e(full_address()) ?><br><?= e(cfg('site.phone')) ?></p>
   </div>
 </section>
 

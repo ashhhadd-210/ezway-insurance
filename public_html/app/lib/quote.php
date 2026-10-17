@@ -49,19 +49,25 @@ function relationships(): array
 function id_types(): array
 {
     return [
-        'us'      => L('US driver license', 'Licencia de EE. UU.'),
-        'foreign' => L('Foreign license', 'Licencia extranjera'),
-        'other'   => L('Other ID / no license', 'Otra ID / sin licencia'),
+        'us'    => L('US driver license', 'Licencia de EE. UU.'),
+        'other' => L('Other ID / no license', 'Otra ID / sin licencia'),
     ];
+}
+
+/** Label for an ID type, including 'foreign' from requests sent before it became a kind of "Other". */
+function id_type_label(string $type): string
+{
+    return id_types()[$type] ?? ($type === 'foreign' ? L('Foreign license', 'Licencia extranjera') : $type);
 }
 
 function id_kinds(): array
 {
     return [
-        'passport'  => L('Passport', 'Pasaporte'),
-        'matricula' => L('Matrícula consular', 'Matrícula consular'),
-        'state_id'  => L('State ID card', 'ID del estado'),
-        'other'     => L('Other ID', 'Otra identificación'),
+        'foreign_license' => L('Foreign license', 'Licencia extranjera'),
+        'state_id'        => L('State ID card', 'ID del estado'),
+        'passport'        => L('Passport', 'Pasaporte'),
+        'matricula'       => L('Matrícula consular', 'Matrícula consular'),
+        'other'           => L('Other ID', 'Otra identificación'),
     ];
 }
 
@@ -70,15 +76,15 @@ function liability_levels(string $service = 'personal_auto'): array
 {
     if ($service === 'commercial_auto') {
         return [
+            'c_min'   => [L('Texas minimum · 30/60/25', 'Mínimo de Texas · 30/60/25'), L('The lowest limits Texas allows. Some contracts require more.', 'Los límites más bajos que permite Texas. Algunos contratos piden más.'), L('Cheapest', 'Más barato')],
             'c_100'   => [L('100/300/100', '100/300/100'), L('$100k per person, $300k per accident, $100k property damage.', '$100k por persona, $300k por accidente, $100k en daños a propiedad.'), ''],
-            'c_250'   => [L('250/500/250', '250/500/250'), L('$250k per person, $500k per accident, $250k property damage.', '$250k por persona, $500k por accidente, $250k en daños a propiedad.'), ''],
             'csl_500' => [L('$500,000 combined', '$500,000 combinado'), L('One combined limit for injuries and damage per accident.', 'Un solo límite combinado para lesiones y daños por accidente.'), ''],
             'csl_1m'  => [L('$1,000,000 combined', '$1,000,000 combinado'), L('The limit most contracts and brokers ask for.', 'El límite que piden la mayoría de los contratos.'), L('Most requested', 'El más pedido')],
             'unsure'  => [L('Not sure yet', 'Todavía no sé'), L('Tell us about your work and we\'ll recommend limits.', 'Cuéntanos de tu trabajo y te recomendamos límites.'), ''],
         ];
     }
     return [
-        'state_min' => [L('Texas minimum · 30/60/25', 'Mínimo de Texas · 30/60/25'), L('The lowest limits Texas requires by law.', 'Los límites más bajos que exige la ley de Texas.'), L('Lowest price', 'Precio más bajo')],
+        'state_min' => [L('Texas minimum · 30/60/25', 'Mínimo de Texas · 30/60/25'), L('The lowest limits Texas requires by law.', 'Los límites más bajos que exige la ley de Texas.'), L('Cheapest price possible', 'El precio más barato posible')],
         'standard'  => [L('Standard · 50/100/50', 'Estándar · 50/100/50'), L('$50k per person, $100k per accident, $50k property damage.', '$50k por persona, $100k por accidente, $50k en daños a propiedad.'), ''],
         'better'    => [L('Better · 100/300/100', 'Mejor · 100/300/100'), L('$100k per person, $300k per accident, $100k property damage.', '$100k por persona, $300k por accidente, $100k en daños a propiedad.'), L('Most popular', 'El más popular')],
         'best'      => [L('Best · 250/500/250', 'Máxima · 250/500/250'), L('$250k per person, $500k per accident, $250k property damage.', '$250k por persona, $500k por accidente, $250k en daños a propiedad.'), L('Most protection', 'Más protección')],
@@ -172,9 +178,9 @@ function validate_quote(array $in): array
     if (!filter_var($applicant['email'], FILTER_VALIDATE_EMAIL)) $err['applicant.email'] = L('Enter a valid email address.', 'Escribe un correo válido.');
     if (strlen(digits($applicant['phone'])) !== 10) $err['applicant.phone'] = L('Enter a 10-digit phone number.', 'Escribe un teléfono de 10 dígitos.');
     if (!isset(contact_prefs()[$applicant['contact_pref']])) $applicant['contact_pref'] = 'phone';
-    if ($serviceKey === 'commercial_auto') {
-        if (mb_strlen($applicant['company']) < 2) $err['applicant.company'] = L('Enter your company name.', 'Escribe el nombre de tu compañía.');
-    } else {
+    if ($serviceKey === 'business') {
+        if (mb_strlen($applicant['business_type']) < 2) $err['applicant.business_type'] = L('Enter your type of business or trade.', 'Escribe tu tipo de negocio u oficio.');
+    } elseif ($serviceKey !== 'commercial_auto') {
         $applicant['company'] = $applicant['business_type'] = '';
     }
 
@@ -185,7 +191,13 @@ function validate_quote(array $in): array
         'city'   => str_in($addr['city'] ?? '', 80),
         'state'  => strtoupper(str_in($addr['state'] ?? '', 2)),
         'zip'    => str_in($addr['zip'] ?? '', 10),
+        'residence' => in_array($addr['residence'] ?? '', ['own', 'rent'], true) ? $addr['residence'] : '',
     ];
+    if ($serviceKey === 'personal_auto') {
+        if ($address['residence'] === '') $err['address.residence'] = L('Tell us if you own or rent your home.', 'Dinos si eres dueño o rentas tu casa.');
+    } else {
+        $address['residence'] = '';
+    }
     $needStreet = $isAuto || $serviceKey === 'home';
     if ($needStreet && mb_strlen($address['street']) < 3) $err['address.street'] = L('Enter the street address.', 'Escribe la dirección.');
     if ($address['city'] === '') $err['address.city'] = L('Enter the city.', 'Escribe la ciudad.');
@@ -240,19 +252,26 @@ function validate_auto(array $in, string $serviceKey, array &$err): array
         if ($row['id_type'] === 'us') {
             $row['license_country'] = $row['id_kind'] = '';
             if (!isset(US_STATES[$row['license_state']])) $err[$p . 'license_state'] = L('Choose the issuing state.', 'Elige el estado que la emitió.');
-        } elseif ($row['id_type'] === 'foreign') {
-            $row['license_state'] = $row['id_kind'] = '';
-            if ($row['license_country'] === '') $err[$p . 'license_country'] = L('Enter the issuing country.', 'Escribe el país que la emitió.');
         } elseif ($row['id_type'] === 'other') {
-            $row['license_state'] = '';
-            if (!isset(id_kinds()[$row['id_kind']])) $err[$p . 'id_kind'] = L('Choose the type of ID.', 'Elige el tipo de identificación.');
             $numberRequired = false;
+            if (!isset(id_kinds()[$row['id_kind']])) $err[$p . 'id_kind'] = L('Choose the type of ID.', 'Elige el tipo de identificación.');
+            if ($row['id_kind'] === 'state_id') {
+                $row['license_country'] = '';
+                if (!isset(US_STATES[$row['license_state']])) $err[$p . 'license_state'] = L('Choose the state that issued the ID.', 'Elige el estado que emitió la ID.');
+            } elseif ($row['id_kind'] === 'foreign_license') {
+                $row['license_state'] = '';
+                if ($row['license_country'] === '') $err[$p . 'license_country'] = L('Enter the issuing country.', 'Escribe el país que la emitió.');
+            } else {
+                $row['license_state'] = $row['license_country'] = '';
+            }
         }
         if ($row['license_number'] === '' ? $numberRequired : !preg_match('/^[A-Z0-9\-*]{4,25}$/', $row['license_number'])) {
             $err[$p . 'license_number'] = L('Enter the ID number (letters and numbers).', 'Escribe el número (letras y números).');
         }
         $drivers[] = $row;
     }
+
+    if (!bool_in($in['drivers_done'] ?? false)) $err['drivers_done'] = L('Add another driver, or check "No more drivers to add".', 'Agrega otro conductor, o marca "No hay más conductores".');
 
     $vehicles = [];
     $rawVehicles = array_values(is_array($in['vehicles'] ?? null) ? $in['vehicles'] : []);
@@ -302,7 +321,11 @@ function validate_auto(array $in, string $serviceKey, array &$err): array
         $vehicles[] = $row;
     }
 
+    if (!bool_in($in['vehicles_done'] ?? false)) $err['vehicles_done'] = L('Add another vehicle, or check "No more vehicles to add".', 'Agrega otro vehículo, o marca "No hay más vehículos".');
+
     $cov = is_array($in['coverage'] ?? null) ? $in['coverage'] : [];
+    // Personal auto is quoted at the Texas minimum; commercial chooses its limits.
+    if ($serviceKey === 'personal_auto') $cov['liability'] = 'state_min';
     $start = parse_date_in(str_in($cov['start_date'] ?? '', 10));
     $coverage = [
         'liability'         => str_in($cov['liability'] ?? '', 12),
@@ -311,6 +334,7 @@ function validate_auto(array $in, string $serviceKey, array &$err): array
         'start_date'        => $start ?? '',
         'currently_insured' => in_array($cov['currently_insured'] ?? '', ['yes', 'no'], true) ? $cov['currently_insured'] : '',
         'current_carrier'   => str_in($cov['current_carrier'] ?? '', 60),
+        'current_expiration'=> parse_date_in(str_in($cov['current_expiration'] ?? '', 10)) ?? '',
         'comments'          => str_in($cov['comments'] ?? '', 1000),
     ];
     if (!isset(liability_levels($serviceKey)[$coverage['liability']])) $err['coverage.liability'] = L('Choose a liability level.', 'Elige un nivel de responsabilidad.');
@@ -318,9 +342,20 @@ function validate_auto(array $in, string $serviceKey, array &$err): array
         $days = (int) (new DateTimeImmutable('today'))->diff(new DateTimeImmutable($start))->format('%r%a');
         if ($days < 0 || $days > 365) $err['coverage.start_date'] = L('Choose a start date within the next 12 months.', 'Elige una fecha dentro de los próximos 12 meses.');
     }
-    if ($coverage['currently_insured'] !== 'yes') $coverage['current_carrier'] = '';
+    if ($coverage['currently_insured'] !== 'yes') $coverage['current_carrier'] = $coverage['current_expiration'] = '';
 
     return [$drivers, $vehicles, $coverage];
+}
+
+/** Is a field asked, given the answers so far? ('show_if' => [key, [values]]) */
+function field_shown(array $f, array $answers): bool
+{
+    if (empty($f['show_if'])) {
+        return true;
+    }
+    [$key, $values] = $f['show_if'];
+    $v = $answers[$key] ?? '';
+    return is_array($v) ? (bool) array_intersect($v, $values) : in_array($v, $values, true);
 }
 
 /** Validates the service-specific questions defined in services(). */
@@ -330,6 +365,10 @@ function validate_details(array $svc, array $raw, array &$err): array
     foreach ($svc['fields'] ?? [] as $f) {
         $k = $f['key'];
         $p = 'details.' . $k;
+        if (!field_shown($f, $out)) {
+            $out[$k] = $f['type'] === 'checks' ? [] : '';
+            continue;
+        }
         $optional = !empty($f['optional']);
         $v = $raw[$k] ?? '';
         switch ($f['type']) {
@@ -347,15 +386,19 @@ function validate_details(array $svc, array $raw, array &$err): array
                 break;
             case 'vin':
                 $v = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', str_in($v, 30)) ?? '');
-                if ($v === '') break;
+                if ($v === '') {
+                    if (!$optional) $err[$p] = L('Enter the 17-character VIN.', 'Escribe el VIN de 17 caracteres.');
+                    break;
+                }
                 if (!vin_format_ok($v)) {
-                    $err[$p] = L('Enter a valid 17-character VIN, or leave it blank.', 'Escribe un VIN válido de 17 caracteres, o déjalo en blanco.');
+                    $err[$p] = L('Enter a valid 17-character VIN (no I, O or Q).', 'Escribe un VIN válido de 17 caracteres (sin I, O ni Q).');
                 } elseif (($dec = vin_decode($v)) && !empty($dec['ok'])) {
                     $out[$k . '_vehicle'] = vehicle_title($dec) . ($dec['trim'] ? ' ' . $dec['trim'] : '');
                 }
                 break;
             case 'textarea':
                 $v = str_in($v, 1000);
+                if ($v === '' && !$optional) $err[$p] = L('Please fill this in.', 'Completa este campo.');
                 break;
             default:
                 $v = str_in($v, $f['maxlength'] ?? 120);
@@ -448,11 +491,11 @@ function driver_license_label(array $d, bool $masked = true): string
     $where = match ($type) {
         'us'      => US_STATES[$d['license_state']] ?? $d['license_state'],
         'foreign' => $d['license_country'],
-        default   => id_kinds()[$d['id_kind'] ?? ''] ?? '',
+        default   => implode(' · ', array_filter([id_kinds()[$d['id_kind'] ?? ''] ?? '', US_STATES[$d['license_state'] ?? ''] ?? '', $d['license_country'] ?? ''])),
     };
     $last4 = $d['license_last4'] ?? '';
     $num = $masked ? ($last4 !== '' ? '••••' . $last4 : '') : ($d['license_number'] ?? '');
-    return implode(' · ', array_filter([id_types()[$type] ?? $type, $where, $num]));
+    return implode(' · ', array_filter([id_type_label($type), $where, $num]));
 }
 
 function vehicle_coverage_list(array $v): array
@@ -542,6 +585,7 @@ function email_new_quote(array $q, array $saved): void
             'Email'    => $a['email'],
             'Prefers'  => contact_prefs()[$a['contact_pref']],
             'Address'  => trim(trim($addr['street'] . ' ' . $addr['unit']) . "\n" . $addr['city'] . ', ' . $addr['state'] . ' ' . $addr['zip']),
+            'Home'     => ['own' => 'Owns', 'rent' => 'Rents'][$addr['residence'] ?? ''] ?? '',
         ]);
         $html .= email_heading('Contact') . email_rows($contact);
         foreach ($contact as $k => $v) $text .= "$k: $v\n";
@@ -575,7 +619,7 @@ function email_new_quote(array $q, array $saved): void
             $c = $q['coverage'];
             $policy = ['Coverage' => implode("\n", policy_coverage_list($c, $q['service']))];
             if ($c['start_date']) $policy['Start date'] = date('M j, Y', strtotime($c['start_date']));
-            if ($c['currently_insured']) $policy['Currently insured'] = ucfirst($c['currently_insured']) . ($c['current_carrier'] ? ' · ' . $c['current_carrier'] : '');
+            if ($c['currently_insured']) $policy['Currently insured'] = ucfirst($c['currently_insured']) . ($c['current_carrier'] ? ' · ' . $c['current_carrier'] : '') . (!empty($c['current_expiration']) ? ' · expires ' . date('M j, Y', strtotime($c['current_expiration'])) : '');
             if ($c['comments']) $policy['Notes'] = $c['comments'];
             $html .= email_heading('Policy') . email_rows($policy);
             $text .= "\nPOLICY\n";
@@ -628,7 +672,7 @@ function email_quote_confirmation(array $q, array $saved): void
             L('We received your request', 'Recibimos tu solicitud') . ' (' . $saved['ref'] . ')',
             email_layout(L('We got your request', 'Recibimos tu solicitud'), $html),
             $text,
-            (string) cfg('site.email')
+            (string) (cfg('site.email') ?: cfg('mail.notify_to'))
         );
     });
 }

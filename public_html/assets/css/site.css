@@ -1329,3 +1329,28 @@ h1, h2, h3, h4 { overflow-wrap: break-word; hyphens: manual; }
 @media (prefers-reduced-motion: reduce) { .rot-in { animation: none; } }
 .page-home .hero-h { font-size: clamp(2.4rem, 4.7vw, 4rem); }
 @media (min-width: 1600px) { .page-home .hero-h { font-size: 4.3rem; } }
+
+/* Round 3: "No more drivers / vehicles" confirmation */
+.done-box { display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; padding: 14px 16px; border-radius: 16px; border: 1.5px solid var(--line-2); background: #fff; cursor: pointer; transition: all .25s var(--ease); }
+.done-box input { position: absolute; opacity: 0; pointer-events: none; }
+.done-box b { display: block; }
+.done-box small { display: block; color: var(--ink-3); font-size: .86rem; }
+.done-box:hover { border-color: var(--ink-3); }
+.done-box input:checked + .consent-box { background: var(--brand-600); border-color: var(--brand-600); }
+.done-box input:checked + .consent-box .i { transform: scale(1); }
+.done-box:has(input:checked) { border-color: var(--ok); background: var(--ok-50); }
+.done-box input:checked + .consent-box { background: var(--ok); border-color: var(--ok); }
+.done-box input:focus-visible + .consent-box { outline: 3px solid var(--brand-500); outline-offset: 2px; }
+.done-box.is-bad { border-color: var(--danger); animation: shake .45s; }
+.done-e { margin-top: 8px; }
+
+/* Round 3: liability included on every personal-auto vehicle (greyed out) */
+.vcov { grid-template-columns: repeat(2, 1fr); }
+.chk-liab { cursor: default; background: var(--sand-100); border-color: var(--line); border-style: dashed; }
+.chk-liab:hover { border-color: var(--line); }
+.chk-liab .chk-box { background: var(--ink-3); border-color: var(--ink-3); opacity: .55; }
+.chk-liab .chk-box .i { transform: scale(1); }
+.chk-liab .chk-ic { background: #fff; color: var(--ink-3); }
+.chk-liab .chk-t b { color: var(--ink-2); }
+.chk-incl { position: absolute; right: 44px; top: 13px; font-size: .68rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; }
+@media (max-width: 640px) { .vcov { grid-template-columns: 1fr; } .chk-incl { position: static; justify-self: start; } }

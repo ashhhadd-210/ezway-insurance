@@ -7,7 +7,7 @@ $faqs = [
     [L('Do you speak Spanish?', '¿Hablan español?'),
      L(spanish_enabled() ? 'Yes. Our team speaks English and Spanish, and this whole website, including the quote form, is available in Spanish.' : 'Yes. Our team speaks English and Spanish. Call or visit any of our offices and we\'ll help you in the language you prefer.', 'Sí. Nuestro equipo habla inglés y español, y todo este sitio, incluyendo la cotización, está en español.')],
     [L('Do you only do car insurance?', '¿Solo hacen seguro de auto?'),
-     L('No. We also do home, commercial auto, general liability, workers comp and bonds, plus title transfers, plates, registration and LLC/DBA registration.', 'No. También hacemos seguro de casa, auto comercial, responsabilidad general, compensación de trabajadores y bonos, además de transferencias de título, placas, registro y registro de LLC/DBA.')],
+     L('No. We also do home, commercial auto, general liability, workers comp and bonds, plus title transfers, plates, registration and LLC registration, at all 4 of our Austin offices.', 'No. También hacemos seguro de casa, auto comercial, responsabilidad general, compensación de trabajadores y bonos, además de transferencias de título, placas, registro y registro de LLC, en nuestras 4 oficinas de Austin.')],
     [L('Does a quote cost anything?', '¿La cotización cuesta algo?'),
      L('No. Quotes are free and there\'s no obligation to buy. We compare ' . cfg('site.carriers') . '+ companies and you decide in your own time.', 'No. Las cotizaciones son gratis y sin compromiso. Comparamos más de ' . cfg('site.carriers') . ' compañías y tú decides con calma.')],
 ];
@@ -157,8 +157,8 @@ require APP_ROOT . '/partials/header.php';
       <div class="chip chip-3" data-depth="12">
         <span class="chip-ic amber"><?= icon('sparkle') ?></span>
         <span><small><?= e(L('We also handle', 'También hacemos')) ?></small>
-          <b class="rot" aria-label="<?= e(L('Title transfers, license plates, bonds, LLC & DBA', 'Títulos, placas, bonos, LLC y DBA')) ?>"><span class="rot-in" aria-hidden="true">
-            <span><?= e(L('Title transfers', 'Transferencia de títulos')) ?></span><span><?= e(L('License plates', 'Placas y registro')) ?></span><span><?= e(L('Bonds', 'Bonos')) ?></span><span><?= e(L('LLC & DBA', 'LLC y DBA')) ?></span><span><?= e(L('Title transfers', 'Transferencia de títulos')) ?></span>
+          <b class="rot" aria-label="<?= e(L('Title transfers, license plates, bonds, LLC registration', 'Títulos, placas, bonos, registro de LLC')) ?>"><span class="rot-in" aria-hidden="true">
+            <span><?= e(L('Title transfers', 'Transferencia de títulos')) ?></span><span><?= e(L('License plates', 'Placas y registro')) ?></span><span><?= e(L('Bonds', 'Bonos')) ?></span><span><?= e(L('LLC registration', 'Registro de LLC')) ?></span><span><?= e(L('Title transfers', 'Transferencia de títulos')) ?></span>
           </span></b>
         </span>
       </div>
@@ -173,7 +173,7 @@ require APP_ROOT . '/partials/header.php';
     $marquee = [['car', L('Personal auto', 'Auto personal')], ['truck', L('Commercial auto', 'Auto comercial')], ['home', L('Home', 'Casa')],
         ['shield', L('General liability', 'Responsabilidad general')], ['hardhat', L('Workers comp', 'Compensación de trabajadores')],
         ['seal', L('Bonds', 'Bonos')], ['doc', L('Title transfers', 'Transferencia de títulos')], ['plate', L('License plates', 'Placas')],
-        ['building', L('LLC & DBA', 'LLC y DBA')]];
+        ['building', L('LLC registration', 'Registro de LLC')]];
     for ($r = 0; $r < 2; $r++): foreach ($marquee as [$ic, $label]): ?>
       <span><?= icon($ic) ?><?= e($label) ?></span>
     <?php endforeach; endfor; ?>
@@ -329,7 +329,7 @@ require APP_ROOT . '/partials/header.php';
     <header class="section-head reveal">
       <p class="eyebrow"><?= e(L('Visit us', 'Visítanos')) ?></p>
       <h2 id="locTitle"><?= e(L('4 offices across Austin, open 7 days a week', '4 oficinas en Austin, abiertas los 7 días')) ?></h2>
-      <p><?= e(L('Walk in for title and registration services, or to talk to an agent face to face.', 'Ven a tramitar títulos y registro, o a hablar en persona con un agente.')) ?></p>
+      <p><?= e(L('Every office offers every service: insurance, titles, plates, bonds and LLC registration.', 'Cada oficina ofrece todos los servicios: seguros, títulos, placas, bonos y registro de LLC.')) ?></p>
     </header>
     <div class="loc-grid">
       <?php foreach (offices() as $o): ?>

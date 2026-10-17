@@ -29,7 +29,7 @@ foreach (['personal_auto', 'commercial_auto'] as $svcKey) {
         $liabilitySets[$svcKey][] = compact('val', 'label', 'desc', 'tag');
     }
 }
-$defaults = ['personal_auto' => 'better', 'commercial_auto' => 'csl_1m'];
+$defaults = ['personal_auto' => 'state_min', 'commercial_auto' => 'c_min'];
 $services = services();
 ?>
 <div class="qw qw-<?= e($qwMode) ?>" id="qw" data-qw data-mode="<?= e($qwMode) ?>" data-lang="<?= lang() ?>"
@@ -94,9 +94,9 @@ $services = services();
           <h3 id="qs-you"><?= e(L('Let\'s start with you', 'Empecemos contigo')) ?></h3>
           <p><?= e(L('We\'ll use this to prepare your quote and to reach you with your options.', 'Lo usamos para preparar tu cotización y contactarte con tus opciones.')) ?></p>
         </header>
-        <div class="grid g2 qw-company" data-only="commercial_auto">
-          <?= $fld(e(L('Company name', 'Nombre de la compañía')), '<input name="applicant.company" autocomplete="organization" maxlength="120">') ?>
-          <?= $fld(e(L('Type of business', 'Tipo de negocio')) . ' ' . $opt, '<input name="applicant.business_type" maxlength="120" placeholder="' . e(L('e.g. Construction, delivery', 'Ej. construcción, entregas')) . '">') ?>
+        <div class="grid g2 qw-company" data-only="commercial_auto business">
+          <?= $fld(e(L('Business / company name', 'Nombre del negocio o compañía')) . ' ' . $opt, '<input name="applicant.company" autocomplete="organization" maxlength="120">') ?>
+          <?= $fld(e(L('Type of business or trade', 'Tipo de negocio u oficio')) . ' <i data-only="commercial_auto">' . e(L('(optional)', '(opcional)')) . '</i>', '<input name="applicant.business_type" maxlength="120" placeholder="' . e(L('e.g. Roofing, landscaping, delivery', 'Ej. techos, jardinería, entregas')) . '">') ?>
         </div>
         <div class="grid g2">
           <?= $fld(e(L('First name', 'Nombre')), '<input name="applicant.first" autocomplete="given-name" maxlength="60" required>') ?>
@@ -134,6 +134,14 @@ $services = services();
           <?= $fld(e(L('City', 'Ciudad')), '<input name="address.city" autocomplete="address-level2" maxlength="80" required>') ?>
           <?= $fld(e(L('State', 'Estado')), '<select name="address.state" autocomplete="address-level1" required>' . $stateOptions(L('Choose…', 'Elige…')) . '</select>') ?>
         </div>
+        <fieldset class="seg-fld" data-only="personal_auto">
+          <legend><?= e(L('Do you own or rent your home?', '¿Eres dueño o rentas tu casa?')) ?> <span class="legend-h"><?= e(L('Homeowners often get a better price on auto insurance.', 'Los dueños de casa muchas veces consiguen mejor precio en su seguro de auto.')) ?></span></legend>
+          <div class="seg seg-2">
+            <label><input type="radio" name="address.residence" value="own"><span><?= icon('home') ?><?= e(L('I own', 'Soy dueño')) ?></span></label>
+            <label><input type="radio" name="address.residence" value="rent"><span><?= icon('key') ?><?= e(L('I rent', 'Rento')) ?></span></label>
+          </div>
+          <span class="fld-e" aria-live="polite"></span>
+        </fieldset>
       </section>
 
       <!-- Drivers -->
@@ -145,6 +153,8 @@ $services = services();
         </header>
         <div class="qw-list" data-list="drivers"></div>
         <button class="qw-add" type="button" data-add="drivers"><span class="qw-add-plus"><?= icon('plus') ?></span><span><?= e(L('Add another driver', 'Agregar otro conductor')) ?></span><small data-count="drivers"></small></button>
+        <label class="done-box"><input type="checkbox" data-done="drivers"><span class="consent-box" aria-hidden="true"><?= icon('check') ?></span><span><b><?= e(L('No more drivers to add', 'No hay más conductores')) ?></b><small><?= e(L('Everyone who drives these vehicles is listed above.', 'Todos los que manejan estos vehículos están en la lista.')) ?></small></span></label>
+        <span class="fld-e done-e" data-done-e="drivers" aria-live="polite"></span>
         <p class="qw-secure"><?= icon('lock') ?> <?= e(L('ID numbers are encrypted and only visible to your agent.', 'Los números de ID están cifrados y solo los ve tu agente.')) ?></p>
       </section>
 
@@ -170,6 +180,8 @@ $services = services();
         </details>
         <div class="qw-list" data-list="vehicles"></div>
         <button class="qw-add" type="button" data-add="vehicles"><span class="qw-add-plus"><?= icon('plus') ?></span><span><?= e(L('Add another vehicle', 'Agregar otro vehículo')) ?></span><small data-count="vehicles"></small></button>
+        <label class="done-box"><input type="checkbox" data-done="vehicles"><span class="consent-box" aria-hidden="true"><?= icon('check') ?></span><span><b><?= e(L('No more vehicles to add', 'No hay más vehículos')) ?></b><small><?= e(L('All the vehicles you want covered are listed above.', 'Todos los vehículos que quieres asegurar están en la lista.')) ?></small></span></label>
+        <span class="fld-e done-e" data-done-e="vehicles" aria-live="polite"></span>
       </section>
 
       <!-- Coverage -->
@@ -180,7 +192,7 @@ $services = services();
           <p><?= e(L('Not sure? Pick what feels right. Your agent will walk you through the options.', '¿No estás seguro? Elige lo que te parezca mejor. Tu agente te explicará las opciones.')) ?></p>
         </header>
 
-        <fieldset class="seg-fld">
+        <fieldset class="seg-fld" data-only="commercial_auto">
           <legend><?= e(L('Liability limits', 'Límites de responsabilidad civil')) ?> <span class="legend-h"><?= e(L('Pays for damage and injuries you cause to others', 'Paga los daños y lesiones que causes a otros')) ?></span></legend>
           <div class="opt-grid" data-liability data-sets="<?= e(json_encode($liabilitySets, JSON_UNESCAPED_UNICODE)) ?>"></div>
           <span class="fld-e" aria-live="polite"></span>
@@ -215,7 +227,8 @@ $services = services();
                 <label><input type="radio" name="coverage.currently_insured" value="no"><span><?= e(L('No', 'No')) ?></span></label>
               </div>
             </div>
-            <?= $fld(e(L('Current insurance company', 'Compañía de seguro actual')), '<input name="coverage.current_carrier" maxlength="60" placeholder="' . e(L('e.g. State Farm', 'Ej. State Farm')) . '">', 'span2') ?>
+            <?= $fld(e(L('Current insurance company', 'Compañía de seguro actual')), '<input name="coverage.current_carrier" maxlength="60" placeholder="' . e(L('e.g. State Farm', 'Ej. State Farm')) . '">', 'if-insured') ?>
+            <?= $fld(e(L('When does it expire?', '¿Cuándo vence?')), '<input name="coverage.current_expiration" type="date">', 'if-insured', e(L('So your new policy starts right on time.', 'Para que tu nueva póliza empiece a tiempo.'))) ?>
             <?= $fld(e(L('Anything else we should know?', '¿Algo más que debamos saber?')), '<textarea name="coverage.comments" rows="3" maxlength="1000" placeholder="' . e(L('Recent tickets or accidents, discounts you\'re asking about, best time to call…', 'Multas o accidentes recientes, descuentos, mejor hora para llamarte…')) . '"></textarea>', 'span2') ?>
           </div>
         </fieldset>
@@ -225,7 +238,7 @@ $services = services();
       <section class="qw-step" data-step="details" aria-labelledby="qs-details" hidden>
         <?php foreach ($services as $key => $s): if ($s['flow'] !== 'details') continue; ?>
         <div class="qw-details" data-details="<?= e($key) ?>" hidden
-             data-fields="<?= e(json_encode(array_map(fn ($f) => ['key' => $f['key'], 'type' => $f['type'], 'optional' => !empty($f['optional']), 'pattern' => isset($f['pattern']) ? trim($f['pattern'], '/') : null], $s['fields']))) ?>">
+             data-fields="<?= e(json_encode(array_map(fn ($f) => ['key' => $f['key'], 'type' => $f['type'], 'optional' => !empty($f['optional']), 'pattern' => isset($f['pattern']) ? trim($f['pattern'], '/') : null, 'show_if' => $f['show_if'] ?? null], $s['fields']))) ?>">
           <header class="qw-head">
             <p class="eyebrow"><?= icon($s['icon']) ?> <?= e($s['title']) ?></p>
             <h3 id="qs-details-<?= e($key) ?>"><?= e(L('Tell us what you need', 'Cuéntanos qué necesitas')) ?></h3>
@@ -235,11 +248,12 @@ $services = services();
             <?php foreach ($s['fields'] as $f):
                 $name = 'details.' . $key . '.' . $f['key'];
                 $label = e($f['label']) . (!empty($f['optional']) ? ' ' . $opt : '');
-                $dataLabel = ' data-label="' . e($f['label']) . '"';
+                $hint = e($f['hint'] ?? '');
+                $dataLabel = ' data-label="' . e($f['label']) . '"' . (!empty($f['show_if']) ? ' data-show-if="' . e(json_encode($f['show_if'])) . '" hidden' : '');
                 switch ($f['type']):
                     case 'radio': ?>
             <fieldset class="seg-fld span2"<?= $dataLabel ?>>
-              <legend><?= $label ?></legend>
+              <legend><?= $label ?><?= $hint ? ' <span class="legend-h">' . $hint . '</span>' : '' ?></legend>
               <div class="pick-grid">
                 <?php foreach ($f['options'] as $val => $olabel): ?>
                 <label class="pick"><input type="radio" name="<?= e($name) ?>" value="<?= e($val) ?>"><span><?= e($olabel) ?></span></label>
@@ -258,14 +272,14 @@ $services = services();
               <span class="fld-e" aria-live="polite"></span>
             </fieldset>
             <?php break; case 'select': ?>
-            <?= $fld($label, '<select name="' . e($name) . '"><option value="">' . e(L('Choose…', 'Elige…')) . '</option>' . implode('', array_map(fn ($v, $l) => '<option value="' . e($v) . '">' . e($l) . '</option>', array_keys($f['options']), $f['options'])) . '</select>', '', '', $dataLabel) ?>
+            <?= $fld($label, '<select name="' . e($name) . '"><option value="">' . e(L('Choose…', 'Elige…')) . '</option>' . implode('', array_map(fn ($v, $l) => '<option value="' . e($v) . '">' . e($l) . '</option>', array_keys($f['options']), $f['options'])) . '</select>', '', $hint, $dataLabel) ?>
             <?php break; case 'textarea': ?>
-            <?= $fld($label, '<textarea name="' . e($name) . '" rows="3" maxlength="1000" placeholder="' . e($f['placeholder'] ?? '') . '"></textarea>', 'span2', '', $dataLabel) ?>
+            <?= $fld($label, '<textarea name="' . e($name) . '" rows="3" maxlength="1000" placeholder="' . e($f['placeholder'] ?? '') . '"></textarea>', 'span2', $hint, $dataLabel) ?>
             <?php break; case 'vin': ?>
             <?= $fld($label, '<span class="fld-wrap vin-wrap"><span class="vin-ic">' . icon('scan') . '</span><input name="' . e($name) . '" maxlength="17" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="' . e(L('17 letters and numbers', '17 letras y números')) . '" class="mono" data-vin-field></span>', 'span2 fld-vin', e($f['hint'] ?? ''), $dataLabel) ?>
-            <div class="vin-res span2" data-vinres-field="<?= e($name) ?>" aria-live="polite"></div>
+            <div class="vin-res span2" data-vinres-field="<?= e($name) ?>" aria-live="polite"<?= !empty($f['show_if']) ? ' data-show-if="' . e(json_encode($f['show_if'])) . '"' : '' ?>></div>
             <?php break; default: ?>
-            <?= $fld($label, '<input name="' . e($name) . '" maxlength="' . (int) ($f['maxlength'] ?? 120) . '"' . (!empty($f['inputmode']) ? ' inputmode="' . e($f['inputmode']) . '"' : '') . ' placeholder="' . e($f['placeholder'] ?? '') . '"' . (!empty($f['pattern']) ? ' data-pattern="' . e(trim($f['pattern'], '/')) . '"' : '') . '>', '', '', $dataLabel) ?>
+            <?= $fld($label, '<input name="' . e($name) . '" maxlength="' . (int) ($f['maxlength'] ?? 120) . '"' . (!empty($f['inputmode']) ? ' inputmode="' . e($f['inputmode']) . '"' : '') . ' placeholder="' . e($f['placeholder'] ?? '') . '"' . (!empty($f['pattern']) ? ' data-pattern="' . e(trim($f['pattern'], '/')) . '"' : '') . '>', '', $hint, $dataLabel) ?>
             <?php endswitch; endforeach; ?>
           </div>
         </div>
@@ -335,18 +349,17 @@ $services = services();
     </div>
     <fieldset class="seg-fld">
       <legend><?= e(L('ID type', 'Tipo de identificación')) ?></legend>
-      <div class="seg seg-3 seg-id">
+      <div class="seg seg-2 seg-id">
         <label><input type="radio" data-f="id_type" value="us"><span><?= icon('flag') ?><?= e(L('US license', 'Licencia EE. UU.')) ?></span></label>
-        <label><input type="radio" data-f="id_type" value="foreign"><span><?= icon('globe') ?><?= e(L('Foreign license', 'Licencia extranjera')) ?></span></label>
         <label><input type="radio" data-f="id_type" value="other"><span><?= icon('id') ?><?= e(L('Other ID', 'Otra ID')) ?></span></label>
       </div>
       <span class="fld-e" aria-live="polite"></span>
     </fieldset>
-    <p class="id-note show-other"><?= icon('check') ?> <?= e(L('No license? No problem. Passport, matrícula consular or any other ID works.', '¿Sin licencia? No hay problema. Sirve pasaporte, matrícula consular o cualquier otra ID.')) ?></p>
+    <p class="id-note show-other"><?= icon('check') ?> <?= e(L('No license? No problem. A foreign license, state ID, passport, matrícula consular or any other ID works.', '¿Sin licencia? No hay problema. Sirve licencia extranjera, ID del estado, pasaporte, matrícula consular o cualquier otra ID.')) ?></p>
     <div class="grid g2">
-      <?= $fld(e(L('Issuing state', 'Estado que la emitió')), '<select data-f="license_state">' . $stateOptions(L('Choose…', 'Elige…')) . '</select>', 'show-us') ?>
-      <?= $fld(e(L('Issuing country', 'País que la emitió')), '<input data-f="license_country" list="qw-countries" maxlength="60" autocomplete="off" placeholder="' . e(L('e.g. Mexico', 'Ej. México')) . '">', 'show-foreign') ?>
       <?= $fld(e(L('Type of ID', 'Tipo de ID')), '<select data-f="id_kind"><option value="">' . e(L('Choose…', 'Elige…')) . '</option>' . implode('', array_map(fn ($k, $v) => '<option value="' . $k . '">' . e($v) . '</option>', array_keys(id_kinds()), id_kinds())) . '</select>', 'show-other') ?>
+      <?= $fld(e(L('Issuing state', 'Estado que la emitió')), '<select data-f="license_state">' . $stateOptions(L('Choose…', 'Elige…')) . '</select>', 'show-state') ?>
+      <?= $fld(e(L('Issuing country', 'País que la emitió')), '<input data-f="license_country" list="qw-countries" maxlength="60" autocomplete="off" placeholder="' . e(L('e.g. Mexico', 'Ej. México')) . '">', 'show-country') ?>
       <?= $fld('<span class="hide-other">' . e(L('License number', 'Número de licencia')) . '</span><span class="show-other">' . e(L('ID number', 'Número de ID')) . ' ' . $opt . '</span>', '<span class="fld-wrap"><input data-f="license_number" maxlength="25" autocomplete="off" autocapitalize="characters" spellcheck="false" class="mono"><span class="fld-lock">' . icon('lock') . '</span></span>') ?>
     </div>
   </article>
@@ -365,6 +378,12 @@ $services = services();
     </div>
     <p class="vcov-l"><?= e(L('Coverage for this vehicle', 'Cobertura para este vehículo')) ?></p>
     <div class="vcov">
+      <div class="chk chk-liab" data-liab-chip>
+        <span class="chk-box" aria-hidden="true"><?= icon('check') ?></span>
+        <span class="chk-ic"><?= icon('scale') ?></span>
+        <span class="chk-t"><b><?= e(L('Liability · Texas minimum', 'Responsabilidad civil · Mínimo de Texas')) ?></b><small><?= e(L('30/60/25 · Cheapest price possible', '30/60/25 · El precio más barato posible')) ?></small></span>
+        <span class="chk-incl"><?= e(L('Included', 'Incluido')) ?></span>
+      </div>
       <label class="chk">
         <input type="checkbox" data-f="full_coverage">
         <span class="chk-box" aria-hidden="true"><?= icon('check') ?></span>

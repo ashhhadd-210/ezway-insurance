@@ -5,7 +5,7 @@ $page = [
     'slug'        => 'services',
     'path'        => 'services',
     'title'       => L('Home, business, bonds, title & registration services in Austin', 'Seguro de casa, negocios, bonos, títulos y registro en Austin'),
-    'description' => L('Home insurance, general liability, workers comp, bonds, title transfers, license plates, registration and LLC/DBA registration at 4 Austin offices. Se habla español.', 'Seguro de casa, responsabilidad general, compensación de trabajadores, bonos, transferencia de títulos, placas, registro y registro de LLC/DBA en 4 oficinas de Austin.'),
+    'description' => L('Home insurance, general liability, workers comp, bonds, title transfers, license plates, registration and LLC registration at 4 Austin offices. Se habla español.', 'Seguro de casa, responsabilidad general, compensación de trabajadores, bonos, transferencia de títulos, placas, registro y registro de LLC en 4 oficinas de Austin.'),
 ];
 
 // Extra copy per service for this page.
@@ -27,8 +27,8 @@ $intro = [
         'Evita las filas largas del condado. Nosotros tramitamos títulos, placas y registro por ti, y te explicamos todo en tu idioma.'
     ),
     'llc' => L(
-        'Starting a business? We register your LLC or DBA so you can open a bank account, get insured and start working.',
-        '¿Vas a abrir un negocio? Registramos tu LLC o DBA para que puedas abrir tu cuenta de banco, asegurarte y empezar a trabajar.'
+        'Starting a business? We register your LLC so you can open a bank account, get insured and start working.',
+        '¿Vas a abrir un negocio? Registramos tu LLC para que puedas abrir tu cuenta de banco, asegurarte y empezar a trabajar.'
     ),
 ];
 $services = array_filter(services(), fn ($s) => $s['flow'] === 'details');
@@ -41,8 +41,8 @@ require APP_ROOT . '/partials/header.php';
     <p class="pill reveal"><span class="pill-dot"></span><?= e(L('More than car insurance', 'Más que seguro de auto')) ?></p>
     <h1 class="reveal"><?= e(L('One local team for', 'Un solo equipo local para')) ?> <span class="text-teal"><?= e(L('everything you need.', 'todo lo que necesitas.')) ?></span></h1>
     <p class="lead reveal"><?= e(L(
-        'Home and business insurance, bonds, titles, plates and registration, and LLC/DBA registration. Handled at 4 Austin offices, in English or Spanish.',
-        'Seguro de casa y negocio, bonos, títulos, placas, registro y registro de LLC/DBA. En 4 oficinas de Austin, en inglés o español.'
+        'Home and business insurance, bonds, titles, plates and registration, and LLC registration. Every service is available at all 4 of our Austin offices, in English or Spanish.',
+        'Seguro de casa y negocio, bonos, títulos, placas, registro y registro de LLC. Todos los servicios en nuestras 4 oficinas de Austin, en inglés o español.'
     )) ?></p>
   </div>
 </section>
@@ -70,7 +70,7 @@ require APP_ROOT . '/partials/header.php';
       <?php if ($key === 'business'): ?>
       <p class="svc-note"><?= icon('truck') ?> <?= e(L('Need work trucks insured?', '¿Necesitas asegurar trocas de trabajo?')) ?> <a href="<?= e(lurl('auto-insurance')) ?>#commercial"><?= e(L('See commercial auto', 'Ver auto comercial')) ?></a></p>
       <?php elseif ($key === 'title'): ?>
-      <p class="svc-note"><?= icon('pin') ?> <?= e(L('Find your nearest office:', 'Encuentra tu oficina más cercana:')) ?> <a href="<?= e(lurl('contact')) ?>"><?= e(L('4 Austin offices', '4 oficinas de Austin')) ?></a></p>
+      <p class="svc-note"><?= icon('pin') ?> <?= e(L('Available at', 'Disponible en')) ?> <a href="<?= e(lurl('contact')) ?>"><?= e(L('all 4 Austin offices', 'nuestras 4 oficinas de Austin')) ?></a></p>
       <?php endif; ?>
     </div>
     <ul class="sub-grid reveal">

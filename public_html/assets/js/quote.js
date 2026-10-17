@@ -108,10 +108,12 @@
     return {
       service: '',
       applicant: { first: '', last: '', dob: '', phone: '', email: '', contact_pref: 'phone', company: '', business_type: '' },
-      address: { zip: '', street: '', unit: '', city: '', state: '' },
+      address: { zip: '', street: '', unit: '', city: '', state: '', residence: '' },
       drivers: [newDriver('self')],
       vehicles: [newVehicle()],
-      coverage: { liability: '', pip: false, um: false, start_date: '', currently_insured: '', current_carrier: '', comments: '' },
+      coverage: { liability: '', pip: false, um: false, start_date: '', currently_insured: '', current_carrier: '', current_expiration: '', comments: '' },
+      drivers_done: false,
+      vehicles_done: false,
       details: {},
       consent: false,
       step: 'service',
@@ -142,6 +144,8 @@
       if (Array.isArray(d.drivers) && d.drivers.length) base.drivers = d.drivers.slice(0, 8).map(function (x, i) { return Object.assign(newDriver(i ? '' : 'self'), x); });
       if (Array.isArray(d.vehicles) && d.vehicles.length) base.vehicles = d.vehicles.slice(0, 6).map(function (x) { return Object.assign(newVehicle(), x); });
       if (d.details && typeof d.details === 'object') base.details = d.details;
+      base.drivers_done = !!d.drivers_done;
+      base.vehicles_done = !!d.vehicles_done;
       if (SERVICE_FLOWS[d.service]) base.service = d.service;
       base.step = d.step || 'service';
       base.furthest = d.furthest || 0;
@@ -204,7 +208,28 @@
     var streetOpt = $('[data-street-opt]');
     if (streetOpt) streetOpt.hidden = streetNeeded();
     if (isAuto()) renderLiability();
+    updateDetailVisibility();
     renderStepper();
+  }
+
+  /* Service questions that depend on an earlier answer ('show_if' in content.php). */
+  function detailShown(showIf, vals) {
+    if (!showIf) return true;
+    var v = vals[showIf[0]];
+    return Array.isArray(v) ? v.some(function (x) { return showIf[1].indexOf(x) > -1; }) : showIf[1].indexOf(v) > -1;
+  }
+  function updateDetailVisibility() {
+    var block = $('[data-details="' + state.service + '"]');
+    if (!block) return;
+    var vals = state.details[state.service] || {};
+    $$('[data-show-if]', block).forEach(function (el) {
+      var show = detailShown(JSON.parse(el.getAttribute('data-show-if')), vals);
+      if (el.hidden === show) el.hidden = !show;
+    });
+  }
+  function fieldVisible(el) {
+    var wrap = el && el.closest('[data-label]');
+    return !wrap || !wrap.hidden;
   }
 
   function streetNeeded() { return isAuto() || state.service === 'home'; }
@@ -239,6 +264,7 @@
       else if (el.type === 'radio') el.checked = el.value === v;
       else el.value = v == null ? '' : v;
     });
+    $$('[data-done]').forEach(function (el) { el.checked = !!state[el.getAttribute('data-done') + '_done']; });
     syncCarrier();
     var today = new Date(), max = new Date(); max.setFullYear(max.getFullYear() + 1);
     var sd = form.elements['coverage.start_date'];
@@ -249,7 +275,7 @@
   function isoDate(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
   function syncCarrier() {
-    form.elements['coverage.current_carrier'].closest('.fld').hidden = state.coverage.currently_insured !== 'yes';
+    $$('.if-insured').forEach(function (el) { el.hidden = state.coverage.currently_insured !== 'yes'; });
   }
 
   function valueOf(el) {
@@ -265,6 +291,13 @@
 
   function onField(e) {
     var el = e.target;
+    if (el.hasAttribute && el.hasAttribute('data-done')) {
+      var dk = el.getAttribute('data-done');
+      state[dk + '_done'] = el.checked;
+      setDoneErr(dk, '');
+      save(e.type === 'change');
+      return;
+    }
     if (!el.name && !el.getAttribute('data-f')) return;
     if (el.type === 'radio' && !el.checked) return;
     var item = el.closest('[data-item]');
@@ -282,6 +315,7 @@
       }
       setPath(el.name, valueOf(el));
       setErr(el, '');
+      if (el.name.indexOf('details.') === 0) updateDetailVisibility();
       if (el.name === 'coverage.currently_insured') syncCarrier();
       if (el.name === 'address.zip') {
         el.value = el.value.replace(/\D/g, '').slice(0, 5);
@@ -370,8 +404,9 @@
       else { av.innerHTML = avatarIcon.drivers; av.classList.remove('is-filled'); }
       rm.hidden = i === 0;
       $('.only-extra', node).hidden = i === 0;
-      $$('.show-us', node).forEach(function (x) { x.hidden = item.id_type !== 'us'; });
-      $$('.show-foreign', node).forEach(function (x) { x.hidden = item.id_type !== 'foreign'; });
+      var isOther = item.id_type === 'other';
+      $$('.show-state', node).forEach(function (x) { x.hidden = !(item.id_type === 'us' || (isOther && item.id_kind === 'state_id')); });
+      $$('.show-country', node).forEach(function (x) { x.hidden = !(isOther && item.id_kind === 'foreign_license'); });
       $$('.show-other', node).forEach(function (x) { x.hidden = item.id_type !== 'other'; });
       $$('.hide-other', node).forEach(function (x) { x.hidden = item.id_type === 'other'; });
     } else {
@@ -381,6 +416,7 @@
       av.classList.toggle('is-ok', !!item.decoded);
       rm.hidden = state.vehicles.length === 1;
       $('[data-full]', node).hidden = !item.full_coverage;
+      $('[data-liab-chip]', node).hidden = state.service !== 'personal_auto';
       $('.show-lien', node).hidden = item.lien !== 'yes';
       var cnt = $('[data-vincount]', node);
       cnt.textContent = item.vin.length + '/17';
@@ -438,6 +474,9 @@
       var kind = add.getAttribute('data-add');
       if (state[kind].length >= MAX[kind]) return;
       state[kind].push(kind === 'drivers' ? newDriver('') : newVehicle());
+      state[kind + '_done'] = false;
+      var doneBox = $('[data-done="' + kind + '"]');
+      if (doneBox) doneBox.checked = false;
       var idx = state[kind].length - 1;
       renderList(kind, idx);
       var card = cardOf(kind, idx);
@@ -603,6 +642,12 @@
     return a;
   }
 
+  function setDoneErr(kind, msg) {
+    var box = $('[data-done-e="' + kind + '"]'), lbl = $('[data-done="' + kind + '"]');
+    if (lbl) lbl.closest('.done-box').classList.toggle('is-bad', !!msg);
+    if (box) { box.textContent = msg || ''; box.classList.toggle('is-on', !!msg); }
+  }
+
   function errBox(el) {
     if (el.name === 'consent') return $('.consent-e');
     var wrap = el.closest('.fld, .seg-fld');
@@ -633,7 +678,7 @@
     }
     if (step === 'you') {
       var a = state.applicant, dob = parseDate(a.dob);
-      if (state.service === 'commercial_auto') need(F['applicant.company'], a.company.trim().length >= 2, T('err.company'));
+      if (state.service === 'business') need(F['applicant.business_type'], a.business_type.trim().length >= 2, T('err.trade'));
       need(F['applicant.first'], NAME_RE.test(a.first.trim()), T('err.first'));
       need(F['applicant.last'], NAME_RE.test(a.last.trim()), T('err.last'));
       need(F['applicant.dob'], dob && age(dob) >= 16 && age(dob) <= 110, a.dob ? T('err.dobAge') : T('err.dob'));
@@ -647,6 +692,7 @@
       else setErr(F['address.street'], '');
       need(F['address.city'], ad.city.trim() !== '', T('err.city'));
       need(F['address.state'], ad.state !== '', T('err.state'));
+      if (state.service === 'personal_auto') need(F['address.residence'][0], ad.residence === 'own' || ad.residence === 'rent', T('err.residence'));
     }
     if (step === 'drivers') {
       state.drivers.forEach(function (d, i) {
@@ -656,13 +702,17 @@
         need(q('last'), NAME_RE.test(d.last.trim()), T('err.lastD'));
         need(q('dob'), dob && age(dob) >= 14 && age(dob) <= 110, d.dob ? T('err.dobBad') : T('err.dobD'));
         if (i > 0) need(q('relationship'), !!d.relationship, T('err.rel'));
-        need(n.querySelector('[data-f=id_type]'), ['us', 'foreign', 'other'].indexOf(d.id_type) > -1, T('err.idType'));
+        need(n.querySelector('[data-f=id_type]'), ['us', 'other'].indexOf(d.id_type) > -1, T('err.idType'));
         if (d.id_type === 'us') need(q('license_state'), !!d.license_state, T('err.licState'));
-        if (d.id_type === 'foreign') need(q('license_country'), d.license_country.trim() !== '', T('err.licCountry'));
-        if (d.id_type === 'other') need(q('id_kind'), !!d.id_kind, T('err.idKind'));
+        if (d.id_type === 'other') {
+          need(q('id_kind'), !!d.id_kind, T('err.idKind'));
+          if (d.id_kind === 'state_id') need(q('license_state'), !!d.license_state, T('err.idState'));
+          if (d.id_kind === 'foreign_license') need(q('license_country'), d.license_country.trim() !== '', T('err.licCountry'));
+        }
         if (d.id_type === 'other' && !num) setErr(q('license_number'), '');
         else need(q('license_number'), /^[A-Z0-9\-*]{4,25}$/.test(num), num ? T('err.licBad') : T('err.licNum'));
       });
+      if (!errs.length && !state.drivers_done) { setDoneErr('drivers', T('err.driversDone')); errs.push([$('[data-done="drivers"]'), null]); }
     }
     if (step === 'vehicles') {
       var seen = {};
@@ -677,10 +727,11 @@
         need(el, !msg, msg);
         if (v.full_coverage) need(n.querySelector('[data-f=lien]'), v.lien === 'yes' || v.lien === 'no', T('err.lien'));
       });
+      if (!errs.length && !state.vehicles_done) { setDoneErr('vehicles', T('err.vehiclesDone')); errs.push([$('[data-done="vehicles"]'), null]); }
     }
     if (step === 'coverage') {
       var c = state.coverage;
-      need($('input[name="coverage.liability"]', liabilityEl), !!c.liability, T('err.liability'));
+      if (state.service === 'commercial_auto') need($('input[name="coverage.liability"]', liabilityEl), !!c.liability, T('err.liability'));
       if (c.start_date) {
         var sd = new Date(c.start_date + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
         var days = (sd - today) / 864e5;
@@ -695,9 +746,11 @@
         var name = 'details.' + state.service + '.' + f.key;
         var el = $$('[name="' + name + '"]', block)[0];
         var v = vals[f.key];
+        if (!fieldVisible(el)) { setErr(el, ''); return; }
         if (f.type === 'radio' || f.type === 'select') need(el, f.optional || !!v, T('err.choose'));
         else if (f.type === 'checks') need(el, f.optional || (Array.isArray(v) && v.length > 0), T('err.chooseAny'));
-        else if (f.type === 'vin') need(el, !v || VIN_RE.test(v), T('err.vinOpt'));
+        else if (f.type === 'vin') need(el, v ? VIN_RE.test(v) : f.optional, v ? T('err.vinOpt') : T('err.vin'));
+        else if (f.type === 'textarea') need(el, f.optional || !!(v || '').trim(), T('err.fill'));
         else if (f.type === 'text') {
           var s = (v || '').trim();
           if (!s) need(el, f.optional, T('err.fill'));
@@ -814,6 +867,7 @@
       var v = vals[f.key];
       if (v == null || v === '' || (Array.isArray(v) && !v.length)) return;
       var name = 'details.' + state.service + '.' + f.key;
+      if (!fieldVisible($('[name="' + name + '"]', block))) return;
       var wrap = $('[name="' + name + '"]', block).closest('[data-label]');
       var label = wrap ? wrap.getAttribute('data-label') : f.key;
       var text = v;
@@ -839,12 +893,14 @@
       esc(T('born')) + ' ' + esc(a.dob), esc(a.phone) + ' · ' + esc(a.email), esc(T('prefers')) + ': ' + esc(LABELS.contact[a.contact_pref] || '')
     ]));
     var cityLine = ad.city + ', ' + (LABELS.state[ad.state] || ad.state) + ' ' + ad.zip;
+    var homeLine = state.service === 'personal_auto' && ad.residence ? T(ad.residence === 'own' ? 'ownsHome' : 'rentsHome') : '';
     html += section(T('address'), 'pin', 'address', ad.street
-      ? item(esc(ad.street + (ad.unit ? ', ' + ad.unit : '')), [esc(cityLine)])
-      : item(esc(cityLine), []));
+      ? item(esc(ad.street + (ad.unit ? ', ' + ad.unit : '')), [esc(cityLine), esc(homeLine)])
+      : item(esc(cityLine), [esc(homeLine)]));
     if (isAuto()) {
       html += section(T('drivers') + ' (' + state.drivers.length + ')', 'users', 'drivers', state.drivers.map(function (d, i) {
-        var where = d.id_type === 'us' ? (LABELS.state[d.license_state] || d.license_state) : d.id_type === 'foreign' ? d.license_country : (LABELS.idKind[d.id_kind] || '');
+        var where = d.id_type === 'us' ? (LABELS.state[d.license_state] || d.license_state)
+          : [LABELS.idKind[d.id_kind] || '', d.id_kind === 'state_id' ? (LABELS.state[d.license_state] || '') : '', d.id_kind === 'foreign_license' ? d.license_country : ''].filter(Boolean).join(' · ');
         var lic = d.license_number.replace(/\s+/g, '');
         return item(esc(d.first + ' ' + d.last) + ' <span class="muted">· ' + esc(i === 0 ? T('you') : LABELS.relationship[d.relationship] || '') + '</span>', [
           esc(T('born')) + ' ' + esc(d.dob),
@@ -863,7 +919,7 @@
       var c = state.coverage, extra = [];
       var liab = (LIAB_SETS[state.service] || []).filter(function (o) { return o.val === c.liability; })[0];
       if (c.start_date) extra.push(esc(T('startDate')) + ': ' + esc(new Date(c.start_date + 'T00:00:00').toLocaleDateString(T('dateLocale'), { month: 'short', day: 'numeric', year: 'numeric' })));
-      if (c.currently_insured) extra.push(esc(T('insured')) + ': ' + (c.currently_insured === 'yes' ? esc(T('yes')) + (c.current_carrier ? ' (' + esc(c.current_carrier) + ')' : '') : esc(T('no'))));
+      if (c.currently_insured) extra.push(esc(T('insured')) + ': ' + (c.currently_insured === 'yes' ? esc(T('yes')) + (c.current_carrier ? ' (' + esc(c.current_carrier) + ')' : '') + (c.current_expiration ? ' · ' + esc(T('expires')) + ' ' + esc(new Date(c.current_expiration + 'T00:00:00').toLocaleDateString(T('dateLocale'), { month: 'short', day: 'numeric', year: 'numeric' })) : '') : esc(T('no'))));
       if (c.comments) extra.push(esc(T('notes')) + ': ' + esc(c.comments));
       html += section(T('coverage'), 'shield', 'coverage', item(esc(T('liability')) + ': ' + esc(liab ? liab.label : ''), extra,
         tag(T('pip'), c.pip) + tag(T('um'), c.um)));
@@ -899,11 +955,13 @@
       p.drivers = state.drivers;
       p.vehicles = state.vehicles.map(function (v) { var c = Object.assign({}, v); delete c._status; return c; });
       p.coverage = state.coverage;
+      p.drivers_done = state.drivers_done;
+      p.vehicles_done = state.vehicles_done;
     }
     return JSON.parse(JSON.stringify(p));
   }
 
-  var STEP_OF = { service: 'service', applicant: 'you', address: 'address', drivers: 'drivers', vehicles: 'vehicles', coverage: 'coverage', details: 'details', consent: 'review' };
+  var STEP_OF = { service: 'service', applicant: 'you', address: 'address', drivers: 'drivers', vehicles: 'vehicles', drivers_done: 'drivers', vehicles_done: 'vehicles', coverage: 'coverage', details: 'details', consent: 'review' };
 
   function showServerErrors(errors) {
     var fl = flow(), first = 99;
@@ -916,7 +974,10 @@
     Object.keys(errors).forEach(function (path) {
       var parts = path.split('.'), el = null;
       if (fl.indexOf(STEP_OF[parts[0]]) !== first) return;
-      if (parts[0] === 'drivers' || parts[0] === 'vehicles') {
+      if (parts[0] === 'drivers_done' || parts[0] === 'vehicles_done') {
+        setDoneErr(parts[0].replace('_done', ''), errors[path]);
+        return;
+      } else if (parts[0] === 'drivers' || parts[0] === 'vehicles') {
         var card = cardOf(parts[0], +parts[1]);
         el = card && card.querySelector('[data-f="' + parts[2] + '"]');
       } else if (parts[0] === 'details') {

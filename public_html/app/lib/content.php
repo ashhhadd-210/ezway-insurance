@@ -9,6 +9,7 @@ defined('APP') or exit;
  * 'flow' => 'auto' runs the drivers/vehicles/coverage steps.
  * 'flow' => 'details' asks the 'fields' questions instead.
  * Field types: radio (pick one), checks (pick any), select, text, textarea, vin.
+ * 'show_if' => [key, [values]] only asks a field when an earlier answer matches.
  */
 function services(): array
 {
@@ -33,31 +34,47 @@ function services(): array
         'home' => [
             'icon'  => 'home',
             'flow'  => 'details',
-            'title' => L('Home insurance', 'Seguro de casa'),
-            'short' => L('Protect your home, mobile home or rental, and everything inside it.', 'Protege tu casa, casa móvil o propiedad de renta, y todo lo que hay adentro.'),
+            'title' => L('Home & renters insurance', 'Seguro de casa e inquilinos'),
+            'short' => L('Protect your home, mobile home, rental or RV, and everything inside it.', 'Protege tu casa, casa móvil, renta o RV, y todo lo que hay adentro.'),
             'page'  => 'services#home',
             'items' => [
                 ['home', L('Homeowners', 'Dueños de casa')],
                 ['key', L('Renters', 'Inquilinos')],
-                ['building', L('Landlord / rental property', 'Propiedad de renta')],
                 ['truck', L('Mobile & manufactured homes', 'Casas móviles y manufacturadas')],
+                ['car', L('RVs & motorhomes', 'RVs y casas rodantes')],
             ],
             'fields' => [
-                ['key' => 'coverage_for', 'type' => 'radio', 'label' => L('What do you need?', '¿Qué necesitas?'), 'options' => [
-                    'own'      => L('I own my home', 'Soy dueño de mi casa'),
-                    'rent'     => L('I rent (renters insurance)', 'Rento (seguro de inquilino)'),
-                    'landlord' => L('I rent it out to others', 'La rento a otras personas'),
+                ['key' => 'coverage_for', 'type' => 'radio', 'label' => L('What do you want to insure?', '¿Qué quieres asegurar?'), 'options' => [
+                    'own'    => L('My home (I own it)', 'Mi casa (soy dueño)'),
+                    'renter' => L('Renters insurance', 'Seguro de inquilino'),
+                    'rv'     => L('RV / motorhome', 'RV / casa rodante'),
                 ]],
-                ['key' => 'property_type', 'type' => 'radio', 'label' => L('Type of property', 'Tipo de propiedad'), 'options' => [
-                    'house'     => L('House', 'Casa'),
-                    'mobile'    => L('Mobile home', 'Casa móvil'),
-                    'condo'     => L('Condo / townhome', 'Condominio / townhome'),
-                    'apartment' => L('Apartment', 'Apartamento'),
+                // Homeowners (house, mobile home, condo)
+                ['key' => 'property_type', 'type' => 'radio', 'label' => L('Type of home', 'Tipo de casa'), 'show_if' => ['coverage_for', ['own']], 'options' => [
+                    'house'  => L('House', 'Casa'),
+                    'mobile' => L('Mobile / manufactured home', 'Casa móvil / manufacturada'),
+                    'condo'  => L('Condo / townhome', 'Condominio / townhome'),
                 ]],
-                ['key' => 'year_built', 'type' => 'text', 'label' => L('Year built', 'Año de construcción'), 'optional' => true, 'placeholder' => '2005', 'maxlength' => 4, 'inputmode' => 'numeric', 'pattern' => '/^(18|19|20)\d{2}$/'],
-                ['key' => 'insured', 'type' => 'radio', 'label' => L('Is it insured right now?', '¿Tiene seguro actualmente?'), 'optional' => true, 'options' => [
-                    'yes' => L('Yes', 'Sí'), 'no' => L('No', 'No'),
+                ['key' => 'year_built', 'type' => 'text', 'label' => L('Year built', 'Año de construcción'), 'optional' => true, 'show_if' => ['coverage_for', ['own']],
+                    'placeholder' => '2005', 'maxlength' => 4, 'inputmode' => 'numeric', 'pattern' => '/^(18|19|20)\d{2}$/'],
+                ['key' => 'roof_year', 'type' => 'text', 'label' => L('Year the roof was last replaced', 'Año en que se cambió el techo'), 'optional' => true, 'show_if' => ['coverage_for', ['own']],
+                    'placeholder' => '2018', 'maxlength' => 4, 'inputmode' => 'numeric', 'pattern' => '/^(19|20)\d{2}$/',
+                    'hint' => L('Not sure? Leave it blank.', '¿No sabes? Déjalo en blanco.')],
+                ['key' => 'claims', 'type' => 'radio', 'label' => L('Any home insurance claims in the last 5 years?', '¿Algún reclamo de seguro de casa en los últimos 5 años?'), 'show_if' => ['coverage_for', ['own']], 'options' => [
+                    'no' => L('No', 'No'), 'yes' => L('Yes', 'Sí'),
                 ]],
+                ['key' => 'claims_info', 'type' => 'textarea', 'label' => L('Tell us about the claims', 'Cuéntanos de los reclamos'), 'optional' => true, 'show_if' => ['claims', ['yes']],
+                    'placeholder' => L('What happened, the year and the amount paid, if you know it', 'Qué pasó, el año y cuánto pagaron, si lo sabes')],
+                // Renters
+                ['key' => 'additional_insured', 'type' => 'radio', 'label' => L('Add an additional insured?', '¿Agregar un asegurado adicional?'), 'show_if' => ['coverage_for', ['renter']],
+                    'hint' => L('For example your landlord, property manager or a roommate.', 'Por ejemplo tu landlord, administrador o compañero de casa.'), 'options' => [
+                    'no' => L('No', 'No'), 'yes' => L('Yes', 'Sí'),
+                ]],
+                ['key' => 'additional_insured_name', 'type' => 'text', 'label' => L('Additional insured name', 'Nombre del asegurado adicional'), 'show_if' => ['additional_insured', ['yes']], 'maxlength' => 120,
+                    'placeholder' => L('Name or company', 'Nombre o compañía')],
+                // RV
+                ['key' => 'rv_vin', 'type' => 'vin', 'label' => L('RV VIN', 'VIN del RV'), 'show_if' => ['coverage_for', ['rv']],
+                    'hint' => L('That\'s all we need for your RV.', 'Es todo lo que necesitamos de tu RV.')],
                 $notes,
             ],
         ],
@@ -75,10 +92,8 @@ function services(): array
                 ['seal', L('Fidelity bonds', 'Bonos de fidelidad')],
                 ['truck', L('Commercial vehicles', 'Vehículos comerciales')],
             ],
+            // Business name and trade are asked on the "You" step.
             'fields' => [
-                ['key' => 'business_name', 'type' => 'text', 'label' => L('Business name', 'Nombre del negocio'), 'maxlength' => 120],
-                ['key' => 'trade', 'type' => 'text', 'label' => L('Type of business or trade', 'Tipo de negocio u oficio'), 'maxlength' => 120,
-                    'placeholder' => L('e.g. Roofing, landscaping, restaurant', 'Ej. techos, jardinería, restaurante')],
                 ['key' => 'coverages', 'type' => 'checks', 'label' => L('What coverage do you need?', '¿Qué cobertura necesitas?'), 'options' => [
                     'general_liability' => L('General liability', 'Responsabilidad general'),
                     'workers_comp'      => L('Workers compensation', 'Compensación de trabajadores'),
@@ -88,6 +103,10 @@ function services(): array
                     'fidelity_bond'     => L('Fidelity bond', 'Bono de fidelidad'),
                     'not_sure'          => L('Not sure, help me', 'No sé, ayúdame'),
                 ]],
+                ['key' => 'payroll', 'type' => 'text', 'label' => L('Yearly payroll', 'Nómina anual'), 'optional' => true, 'maxlength' => 30, 'inputmode' => 'decimal',
+                    'placeholder' => L('e.g. $80,000', 'Ej. $80,000'), 'hint' => L('How much you pay your employees in a year.', 'Cuánto pagas a tus empleados en un año.')],
+                ['key' => 'gross_income', 'type' => 'text', 'label' => L('Gross income (or expected)', 'Ingresos brutos (o esperados)'), 'optional' => true, 'maxlength' => 30, 'inputmode' => 'decimal',
+                    'placeholder' => L('e.g. $250,000', 'Ej. $250,000'), 'hint' => L('Your yearly sales. An estimate is fine.', 'Tus ventas al año. Un estimado está bien.')],
                 ['key' => 'employees', 'type' => 'select', 'label' => L('Number of employees', 'Número de empleados'), 'optional' => true, 'options' => [
                     'just_me' => L('Just me', 'Solo yo'), '2_5' => '2 – 5', '6_20' => '6 – 20', '21_plus' => '21+',
                 ]],
@@ -101,23 +120,27 @@ function services(): array
             'icon'  => 'seal',
             'flow'  => 'details',
             'title' => L('Bonds', 'Bonos'),
-            'short' => L('Title bonds, fidelity bonds, contractor and license bonds, issued fast.', 'Bonos de título, de fidelidad, de contratista y de licencia, rápido.'),
+            'short' => L('Title, permit, fidelity, contractor and license bonds, issued fast.', 'Bonos de título, de permiso, de fidelidad, de contratista y de licencia, rápido.'),
             'page'  => 'services#bonds',
             'items' => [
                 ['doc', L('Title bonds', 'Bonos de título')],
+                ['id', L('Permit bonds', 'Bonos de permiso')],
                 ['seal', L('Fidelity bonds', 'Bonos de fidelidad')],
                 ['hardhat', L('Contractor & license bonds', 'Bonos de contratista y licencia')],
-                ['shield', L('Other surety bonds', 'Otros bonos de garantía')],
             ],
             'fields' => [
                 ['key' => 'bond_type', 'type' => 'radio', 'label' => L('Which bond do you need?', '¿Qué bono necesitas?'), 'options' => [
                     'title'      => L('Title bond', 'Bono de título'),
+                    'permit'     => L('Permit bond', 'Bono de permiso'),
                     'fidelity'   => L('Fidelity bond', 'Bono de fidelidad'),
                     'contractor' => L('Contractor or license bond', 'Bono de contratista o licencia'),
                     'other'      => L('Other / not sure', 'Otro / no sé'),
                 ]],
+                ['key' => 'bond_amount', 'type' => 'text', 'label' => L('Bond amount you need', 'Monto del bono que necesitas'), 'optional' => true, 'maxlength' => 30, 'inputmode' => 'decimal',
+                    'show_if' => ['bond_type', ['title', 'permit', 'fidelity', 'contractor', 'other']],
+                    'placeholder' => L('e.g. $10,000', 'Ej. $10,000'), 'hint' => L('Not sure? Leave it blank and we\'ll help you.', '¿No sabes? Déjalo en blanco y te ayudamos.')],
                 ['key' => 'notes', 'type' => 'textarea', 'label' => L('What is the bond for?', '¿Para qué es el bono?'), 'optional' => true,
-                    'placeholder' => L('Vehicle, business license, contract amount…', 'Vehículo, licencia de negocio, monto del contrato…')],
+                    'placeholder' => L('Vehicle, permit, business license, contract…', 'Vehículo, permiso, licencia de negocio, contrato…')],
             ],
         ],
         'title' => [
@@ -137,35 +160,27 @@ function services(): array
                 ['seal', L('Title bonds', 'Bonos de título')],
             ],
             'fields' => [
-                ['key' => 'needs', 'type' => 'checks', 'label' => L('What do you need?', '¿Qué necesitas?'), 'options' => [
-                    'transfer'     => L('Title transfer', 'Transferencia de título'),
-                    'plates'       => L('License plates', 'Placas'),
-                    'registration' => L('Registration', 'Registro'),
-                    'temp_plates'  => L('Temporary plates', 'Placas temporales'),
-                    'renewal'      => L('Renewal', 'Renovación'),
-                    'salvage'      => L('Salvage title', 'Título salvage'),
-                    'out_of_state' => L('Out-of-state title', 'Título de otro estado'),
-                    'title_bond'   => L('Title bond', 'Bono de título'),
+                ['key' => 'needs', 'type' => 'radio', 'label' => L('What do you need?', '¿Qué necesitas?'), 'options' => [
+                    'transfer' => L('Title transfer', 'Transferencia de título'),
+                    'other'    => L('Something else', 'Otra cosa'),
                 ]],
+                ['key' => 'other_need', 'type' => 'textarea', 'label' => L('Tell us what you need', 'Cuéntanos qué necesitas'), 'show_if' => ['needs', ['other']],
+                    'placeholder' => L('Plates, registration, renewal, salvage or out-of-state title…', 'Placas, registro, renovación, título salvage o de otro estado…')],
                 ['key' => 'vin', 'type' => 'vin', 'label' => L('Vehicle VIN', 'VIN del vehículo'), 'optional' => true,
                     'hint' => L('Optional. Helps us get your paperwork ready.', 'Opcional. Nos ayuda a preparar tus papeles.')],
-                $notes,
             ],
         ],
         'llc' => [
             'icon'  => 'building',
             'flow'  => 'details',
-            'title' => L('LLC & DBA registration', 'Registro de LLC y DBA'),
-            'short' => L('Register your LLC or DBA (assumed name) and get your business ready to work.', 'Registra tu LLC o DBA (nombre comercial) y deja tu negocio listo para trabajar.'),
+            'title' => L('LLC registration', 'Registro de LLC'),
+            'short' => L('Register your LLC and get your business ready to work.', 'Registra tu LLC y deja tu negocio listo para trabajar.'),
             'page'  => 'services#llc',
             'items' => [
                 ['building', L('LLC registration', 'Registro de LLC')],
-                ['doc', L('DBA / assumed name', 'DBA / nombre comercial')],
+                ['shield', L('Business insurance once you\'re registered', 'Seguro para tu negocio ya registrado')],
             ],
             'fields' => [
-                ['key' => 'entity', 'type' => 'radio', 'label' => L('What do you want to register?', '¿Qué quieres registrar?'), 'options' => [
-                    'llc' => 'LLC', 'dba' => L('DBA (assumed name)', 'DBA (nombre comercial)'), 'not_sure' => L('Not sure, help me', 'No sé, ayúdame'),
-                ]],
                 ['key' => 'business_name', 'type' => 'text', 'label' => L('Business name you want', 'Nombre que quieres para tu negocio'), 'optional' => true, 'maxlength' => 120],
                 $notes,
             ],

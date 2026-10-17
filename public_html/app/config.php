@@ -37,7 +37,9 @@ return [
         // Leave empty to detect automatically.
         'url'         => '',
         'phone'       => '(512) 679-2682',
-        'email'       => 'ezwayuw@gmail.com',
+        // Public email shown on the website. Leave empty to keep it private
+        // (quote requests still go to mail.notify_to below).
+        'email'       => '',
         'license'     => '',          // Texas agency license number; shown in the footer when set
         'licensed_in' => 'Texas',
         'years'       => 10,          // "10+ years"

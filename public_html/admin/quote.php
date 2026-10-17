@@ -96,6 +96,7 @@ admin_head($name . ' · ' . $row['ref'], 'quotes');
         <div><dt>Email</dt><dd><a href="mailto:<?= e($a['email']) ?>"><?= e($a['email']) ?></a></dd></div>
         <div><dt>Prefers</dt><dd><?= e(contact_prefs()[$a['contact_pref']] ?? '') ?></dd></div>
         <div><dt><?= $q['service'] === 'home' ? 'Property address' : 'Address' ?></dt><dd><?= $addrLine !== '' ? e($addrLine) . '<br>' : '' ?><?= e($cityLine) ?> <a class="a-link-sm" href="https://www.google.com/maps/search/?api=1&amp;query=<?= e(rawurlencode(trim($addrLine . ', ' . $cityLine, ', '))) ?>" target="_blank" rel="noopener">Map ↗</a></dd></div>
+        <?php if (!empty($addr['residence'])): ?><div><dt>Home</dt><dd><?= $addr['residence'] === 'own' ? 'Owns their home' : 'Rents their home' ?></dd></div><?php endif; ?>
       </dl>
     </section>
 
@@ -124,7 +125,7 @@ admin_head($name . ' · ' . $row['ref'], 'quotes');
             $where = match ($d['id_type']) {
                 'us'      => ['Issuing state', US_STATES[$d['license_state']] ?? $d['license_state']],
                 'foreign' => ['Issuing country', $d['license_country']],
-                default   => ['Type of ID', id_kinds()[$d['id_kind']] ?? '—'],
+                default   => ['Type of ID', implode(' · ', array_filter([id_kinds()[$d['id_kind']] ?? '—', US_STATES[$d['license_state'] ?? ''] ?? '', $d['license_country'] ?? '']))],
             }; ?>
         <article class="a-item">
           <header>
@@ -133,7 +134,7 @@ admin_head($name . ' · ' . $row['ref'], 'quotes');
           </header>
           <dl class="a-dl a-dl-2">
             <div><dt>Date of birth</dt><dd><?= e(fmt_dob($d['dob'])) ?></dd></div>
-            <div><dt>ID type</dt><dd><span class="a-tag <?= $d['id_type'] !== 'us' ? 't-amber' : '' ?>"><?= icon(['us' => 'flag', 'foreign' => 'globe'][$d['id_type']] ?? 'id') ?><?= e(id_types()[$d['id_type']] ?? '') ?></span></dd></div>
+            <div><dt>ID type</dt><dd><span class="a-tag <?= $d['id_type'] !== 'us' ? 't-amber' : '' ?>"><?= icon(['us' => 'flag', 'foreign' => 'globe'][$d['id_type']] ?? 'id') ?><?= e(id_type_label($d['id_type'])) ?></span></dd></div>
             <div><dt><?= e($where[0]) ?></dt><dd><?= e($where[1]) ?></dd></div>
             <div><dt><?= $d['id_type'] === 'us' || $d['id_type'] === 'foreign' ? 'License number' : 'ID number' ?></dt><dd>
               <?php if ($lic === '' && ($d['license_last4'] ?? '') === ''): ?>
@@ -193,7 +194,7 @@ admin_head($name . ' · ' . $row['ref'], 'quotes');
         <div><dt>Personal injury protection</dt><dd><?= $cov['pip'] ? '<span class="a-tag t-teal">' . icon('check') . 'Yes</span>' : '<span class="a-tag t-off">No</span>' ?></dd></div>
         <div><dt>Uninsured motorist</dt><dd><?= $cov['um'] ? '<span class="a-tag t-teal">' . icon('check') . 'Yes</span>' : '<span class="a-tag t-off">No</span>' ?></dd></div>
         <div><dt>Coverage start</dt><dd><?= $cov['start_date'] ? e(date('M j, Y', strtotime($cov['start_date']))) : '<span class="a-muted">Not given</span>' ?></dd></div>
-        <div><dt>Currently insured</dt><dd><?= $cov['currently_insured'] ? e(ucfirst($cov['currently_insured'])) . ($cov['current_carrier'] ? ' · ' . e($cov['current_carrier']) : '') : '<span class="a-muted">Not given</span>' ?></dd></div>
+        <div><dt>Currently insured</dt><dd><?= $cov['currently_insured'] ? e(ucfirst($cov['currently_insured'])) . ($cov['current_carrier'] ? ' · ' . e($cov['current_carrier']) : '') . (!empty($cov['current_expiration']) ? ' · <b>expires ' . e(date('M j, Y', strtotime($cov['current_expiration']))) . '</b>' : '') : '<span class="a-muted">Not given</span>' ?></dd></div>
         <?php if ($cov['comments']): ?><div class="a-dl-full"><dt>Customer notes</dt><dd class="a-quote"><?= nl2br(e($cov['comments'])) ?></dd></div><?php endif; ?>
       </dl>
     </section>

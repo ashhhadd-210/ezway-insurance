@@ -23,6 +23,7 @@ $js = [
     'liability' => L('Liability', 'Responsabilidad civil'), 'pip' => L('Personal injury protection', 'Protección contra lesiones'),
     'um' => L('Uninsured motorist', 'Conductor sin seguro'), 'startDate' => L('Start date', 'Fecha de inicio'),
     'insured' => L('Currently insured', 'Tiene seguro'), 'yes' => L('Yes', 'Sí'), 'no' => L('No', 'No'), 'notes' => L('Notes', 'Notas'),
+    'expires' => L('expires', 'vence'), 'ownsHome' => L('Owns their home', 'Es dueño de su casa'), 'rentsHome' => L('Rents their home', 'Renta su casa'),
     'edit' => L('Edit', 'Editar'), 'aboutYou' => L('About you', 'Tus datos'), 'address' => L('Address', 'Dirección'),
     'drivers' => L('Drivers', 'Conductores'), 'vehicles' => L('Vehicles', 'Vehículos'), 'coverage' => L('Coverage', 'Cobertura'),
     'details' => L('Details', 'Detalles'), 'service' => L('Service', 'Servicio'),
@@ -38,6 +39,11 @@ $js = [
         'dobAge' => L('Enter a real date as MM/DD/YYYY (you must be 16 or older).', 'Escribe una fecha real como MM/DD/AAAA (debes tener 16 años o más).'),
         'phone' => L('Enter a 10-digit phone number.', 'Escribe un teléfono de 10 dígitos.'), 'email' => L('Enter a valid email address.', 'Escribe un correo válido.'),
         'company' => L('Enter your company name.', 'Escribe el nombre de tu compañía.'),
+        'trade' => L('Enter your type of business or trade.', 'Escribe tu tipo de negocio u oficio.'),
+        'residence' => L('Tell us if you own or rent your home.', 'Dinos si eres dueño o rentas tu casa.'),
+        'idState' => L('Choose the state that issued the ID.', 'Elige el estado que emitió la ID.'),
+        'driversDone' => L('Add another driver, or check "No more drivers to add".', 'Agrega otro conductor, o marca "No hay más conductores".'),
+        'vehiclesDone' => L('Add another vehicle, or check "No more vehicles to add".', 'Agrega otro vehículo, o marca "No hay más vehículos".'),
         'zip' => L('Enter a 5-digit ZIP code.', 'Escribe un código postal de 5 dígitos.'), 'street' => L('Enter the street address.', 'Escribe la dirección.'),
         'city' => L('Enter the city.', 'Escribe la ciudad.'), 'state' => L('Choose the state.', 'Elige el estado.'),
         'rel' => L('Choose how this driver is related to you.', 'Elige el parentesco con este conductor.'), 'idType' => L('Choose an ID type.', 'Elige un tipo de ID.'),
@@ -120,7 +126,7 @@ $js = [
         </li>
         <?php endforeach; ?>
         <li><a href="<?= e(tel_href(cfg('site.phone'))) ?>"><?= icon('phone') ?><span><?= e(cfg('site.phone')) ?></span></a></li>
-        <li><a href="mailto:<?= e(cfg('site.email')) ?>"><?= icon('mail') ?><span><?= e(cfg('site.email')) ?></span></a></li>
+        <?php if (cfg('site.email')): ?><li><a href="mailto:<?= e(cfg('site.email')) ?>"><?= icon('mail') ?><span><?= e(cfg('site.email')) ?></span></a></li><?php endif; ?>
       </ul>
       <a class="footer-more" href="<?= e(lurl('contact')) ?>"><?= e(L('Hours for every office', 'Horarios de cada oficina')) ?> <?= icon('arrow-right') ?></a>
     </div>

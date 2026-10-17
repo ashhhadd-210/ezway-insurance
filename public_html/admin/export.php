@@ -49,7 +49,7 @@ foreach ($rows as $r) {
         $a['first'] ?? '', $a['last'] ?? '', $a['dob'] ?? '', $a['email'] ?? '', $a['phone'] ?? '', contact_prefs()[$a['contact_pref'] ?? ''] ?? '',
         $ad['street'] ?? '', $ad['unit'] ?? '', $ad['city'] ?? '', $ad['state'] ?? '', $ad['zip'] ?? '',
         $drivers, $vehicles, $c ? (liability_levels($q['service'])[$c['liability'] ?? ''][0] ?? '') : '', $c ? (!empty($c['pip']) ? 'Yes' : 'No') : '', $c ? (!empty($c['um']) ? 'Yes' : 'No') : '',
-        $c['start_date'] ?? '', $c['currently_insured'] ?? '', $c['current_carrier'] ?? '', $c['comments'] ?? '', $details, $r['notes'] ?? '',
+        $c['start_date'] ?? '', trim(($c['currently_insured'] ?? '') . (!empty($c['current_expiration']) ? ', expires ' . $c['current_expiration'] : '') . (!empty($ad['residence']) ? ' (' . ($ad['residence'] === 'own' ? 'owns home' : 'rents home') . ')' : '')), $c['current_carrier'] ?? '', $c['comments'] ?? '', $details, $r['notes'] ?? '',
     ]));
 }
 fclose($out);

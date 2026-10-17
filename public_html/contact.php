@@ -30,7 +30,7 @@ require APP_ROOT . '/partials/header.php';
     <p class="lead reveal"><?= e(L('Questions about a quote, your policy, a claim or your paperwork? Call, stop by or send us a message, in English or Spanish.', '¿Preguntas sobre una cotización, tu póliza, un reclamo o tus trámites? Llámanos, visítanos o envíanos un mensaje, en inglés o en español.')) ?></p>
     <div class="split-actions center reveal">
       <a class="btn btn-primary btn-lg" href="<?= e(tel_href(cfg('site.phone'))) ?>"><?= icon('phone') ?> <?= e(cfg('site.phone')) ?></a>
-      <a class="btn btn-ghost btn-lg" href="mailto:<?= e(cfg('site.email')) ?>"><?= icon('mail') ?> <?= e(L('Email us', 'Escríbenos')) ?></a>
+      <a class="btn btn-ghost btn-lg" href="#message"><?= icon('chat') ?> <?= e(L('Send a message', 'Envía un mensaje')) ?></a>
     </div>
   </div>
 </section>
@@ -73,7 +73,7 @@ require APP_ROOT . '/partials/header.php';
 
 <section class="section section-tint">
   <div class="wrap contact-grid">
-    <div class="card-panel reveal">
+    <div class="card-panel reveal" id="message">
       <h2><?= e(L('Send us a message', 'Envíanos un mensaje')) ?></h2>
       <p class="muted"><?= e(L('Looking for a price? The', '¿Buscas un precio? La')) ?> <button class="link-btn" type="button" data-quote><?= e(L('quote form', 'cotización en línea')) ?></button> <?= e(L('is the fastest way to get one.', 'es la forma más rápida.')) ?></p>
       <form class="contact-form" data-contact data-token="<?= e(form_token()) ?>" data-api="<?= e(url('api/contact.php')) ?>" data-turnstile="<?= e(turnstile_enabled() ? cfg('security.turnstile_site_key') : '') ?>" novalidate>
@@ -108,11 +108,11 @@ require APP_ROOT . '/partials/header.php';
         <b><?= e(cfg('site.phone')) ?></b>
         <small><?= e(L('Fastest way to get help', 'La forma más rápida de recibir ayuda')) ?></small>
       </a>
-      <a class="cc" href="mailto:<?= e(cfg('site.email')) ?>">
-        <span class="cc-ic"><?= icon('mail') ?></span>
-        <span class="cc-l"><?= e(L('Email us', 'Escríbenos')) ?></span>
-        <b><?= e(cfg('site.email')) ?></b>
-        <small><?= e(L('We reply within one business day', 'Contestamos en un día hábil')) ?></small>
+      <a class="cc" href="#offTitle">
+        <span class="cc-ic"><?= icon('pin') ?></span>
+        <span class="cc-l"><?= e(L('Visit us', 'Visítanos')) ?></span>
+        <b><?= e(L('4 offices in Austin', '4 oficinas en Austin')) ?></b>
+        <small><?= e(L('Every service at every office', 'Todos los servicios en cada oficina')) ?></small>
       </a>
       <div class="cc cc-static">
         <span class="cc-ic"><?= icon('language') ?></span>
