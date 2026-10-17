@@ -1311,3 +1311,21 @@ h1, h2, h3, h4 { overflow-wrap: break-word; hyphens: manual; }
   .cd h2 { font-size: 1.5rem; }
 }
 @media (max-width: 1200px) and (min-width: 981px) { .chip-2 { right: -1%; } .chip-1 { left: -3%; } }
+
+/* Hero: rotating "We also handle…" chip */
+.chip .rot { display: block; height: 1.3em; overflow: hidden; }
+.rot-in { display: block; animation: rot 10s cubic-bezier(.7, 0, .3, 1) infinite; }
+.rot-in span { display: block; height: 1.3em; line-height: 1.3em; white-space: nowrap; }
+@keyframes rot {
+  0%, 20% { transform: translateY(0); }
+  25%, 45% { transform: translateY(-1.3em); }
+  50%, 70% { transform: translateY(-2.6em); }
+  75%, 95% { transform: translateY(-3.9em); }
+  100% { transform: translateY(-5.2em); }
+}
+.scene .house .win rect { animation: winglow 4s ease-in-out infinite; }
+.scene .house .win rect:nth-child(2) { animation-delay: 2s; }
+@keyframes winglow { 50% { opacity: .7; } }
+@media (prefers-reduced-motion: reduce) { .rot-in { animation: none; } }
+.page-home .hero-h { font-size: clamp(2.4rem, 4.7vw, 4rem); }
+@media (min-width: 1600px) { .page-home .hero-h { font-size: 4.3rem; } }

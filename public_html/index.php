@@ -32,12 +32,12 @@ require APP_ROOT . '/partials/header.php';
     <div class="hero-copy">
       <p class="pill reveal"><span class="pill-dot"></span><?= e(L('Licensed in Texas · 4 Austin offices · Se habla español', 'Con licencia en Texas · 4 oficinas en Austin · Hablamos inglés y español')) ?></p>
       <h1 class="hero-h reveal">
-        <?= e(L('Insurance for every driver', 'Seguro para cada conductor')) ?>
-        <span class="hl"><?= e(L('& every ride.', 'y cada viaje.')) ?><svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c60-9 140-13 294-6" /></svg></span>
+        <?= e(L('Car, home & business insurance,', 'Seguros de auto, casa y negocio,')) ?>
+        <span class="hl"><?= e(L('made EZ.', 'más fácil.')) ?><svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c60-9 140-13 294-6" /></svg></span>
       </h1>
       <p class="lead reveal"><?= e(L(
-          'Car, home and business insurance from ' . cfg('site.carriers') . '+ companies, plus titles, plates and registration. Tell us what you need once and a local agent finds your best price.',
-          'Seguro de auto, casa y negocio con más de ' . cfg('site.carriers') . ' compañías, además de títulos, placas y registro. Dinos qué necesitas una sola vez y un agente local encuentra tu mejor precio.'
+          'One local team for everything you drive, own and build: ' . cfg('site.carriers') . '+ insurance companies compared for you, plus titles, plates, bonds and LLC registration. Tell us what you need once and we find your best price.',
+          'Un solo equipo local para todo lo que manejas, tienes y construyes: comparamos más de ' . cfg('site.carriers') . ' compañías por ti, además de títulos, placas, bonos y registro de LLC. Dinos qué necesitas una sola vez y encontramos tu mejor precio.'
       )) ?></p>
 
       <form class="zip-form reveal" data-zipform data-service="">
@@ -51,13 +51,13 @@ require APP_ROOT . '/partials/header.php';
 
       <ul class="hero-ticks reveal">
         <li><?= icon('id') ?> <?= e(L('No license? No problem', '¿Sin licencia? No hay problema')) ?></li>
-        <li><?= icon('clock') ?> <?= e(L('About 3 minutes', 'Unos 3 minutos')) ?></li>
+        <li><?= icon('search') ?> <?= e(L(cfg('site.carriers') . '+ companies compared', 'Más de ' . cfg('site.carriers') . ' compañías')) ?></li>
         <li><?= icon('check') ?> <?= e(L('Free, no obligation', 'Gratis y sin compromiso')) ?></li>
       </ul>
     </div>
 
     <div class="hero-art reveal" data-parallax>
-      <svg class="scene" viewBox="0 0 560 520" role="img" aria-label="<?= e(L('Illustration of a car driving under a protective shield', 'Ilustración de un auto manejando bajo un escudo protector')) ?>">
+      <svg class="scene" viewBox="0 0 560 520" role="img" aria-label="<?= e(L('Illustration of a home, a business and a car protected by one shield', 'Ilustración de una casa, un negocio y un auto protegidos por un mismo escudo')) ?>">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0D1640"/><stop offset="1" stop-color="#1B2A68"/></linearGradient>
           <radialGradient id="sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFD48A"/><stop offset=".55" stop-color="#FFB547" stop-opacity=".55"/><stop offset="1" stop-color="#FFB547" stop-opacity="0"/></radialGradient>
@@ -90,10 +90,36 @@ require APP_ROOT . '/partials/header.php';
             <path d="M280 96 168 138v86c0 74 47 126 112 148 65-22 112-74 112-148v-86L280 96Z" fill="url(#shieldG)" stroke="#8ED3EC" stroke-opacity=".7" stroke-width="2.5"/>
             <path class="shield-check" d="m240 214 28 28 54-56" fill="none" stroke="#8ED3EC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
           </g>
+          <g class="house" transform="translate(30 300)">
+            <rect x="106" y="10" width="15" height="28" fill="#B84A3C"/>
+            <rect x="12" y="40" width="126" height="66" rx="2" fill="#F3EEE4"/>
+            <path d="M0 44 75 0l75 44Z" fill="#F26D5B"/>
+            <path d="M75 0 150 44h-14L75 8Z" fill="#000" opacity=".12"/>
+            <g class="win" fill="#FFD48A"><rect x="24" y="56" width="28" height="24" rx="3"/><rect x="98" y="56" width="28" height="24" rx="3"/></g>
+            <path d="M38 56v24M24 68h28M112 56v24M98 68h28" stroke="#E5B25C" stroke-width="2"/>
+            <rect x="64" y="66" width="22" height="40" rx="3" fill="#2B3990"/>
+            <circle cx="81" cy="87" r="2" fill="#FFD48A"/>
+            <path d="M75 20v10" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>
+          </g>
+          <g class="shop" transform="translate(392 284)">
+            <rect x="0" y="22" width="150" height="100" rx="2" fill="#E8EEFB"/>
+            <rect x="-4" y="12" width="158" height="16" rx="3" fill="#2B3990"/>
+            <rect x="36" y="30" width="78" height="18" rx="4" fill="#FFB547"/>
+            <text x="75" y="43" text-anchor="middle" font-family="Figtree, Arial, sans-serif" font-size="11" font-weight="800" fill="#0D1640"><?= e(L('OPEN', 'ABIERTO')) ?></text>
+            <g class="awning">
+              <rect x="0" y="54" width="150" height="12" fill="#fff"/>
+              <path d="M0 54h15v12H0zM30 54h15v12H30zM60 54h15v12H60zM90 54h15v12H90zM120 54h15v12h-15z" fill="#FFB547"/>
+              <path d="M0 66a7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0 7.5 7.5 0 0 0 15 0Z" fill="#FFB547"/>
+            </g>
+            <rect x="10" y="78" width="58" height="36" rx="3" fill="#CFE9F5"/>
+            <path d="M18 104 32 86M30 108l14-18" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+            <rect x="80" y="76" width="28" height="46" rx="3" fill="#9CC9E8"/>
+            <rect x="116" y="78" width="26" height="36" rx="3" fill="#CFE9F5"/>
+          </g>
           <rect y="414" width="560" height="106" fill="#0A1233"/>
           <rect y="414" width="560" height="5" fill="#1E2C66"/>
           <path class="lane" d="M-40 470H600" stroke="#FFD48A" stroke-width="5" stroke-dasharray="34 26" stroke-linecap="round"/>
-          <g class="car" transform="translate(132 322)">
+          <g class="car" transform="translate(176 342) scale(.8)">
             <path class="beam" d="M268 58 420 36v70L268 74Z" fill="url(#beam)"/>
             <g class="speed" stroke="#8ED3EC" stroke-width="3" stroke-linecap="round" opacity=".7">
               <path d="M-50 40h34"/><path d="M-70 60h48"/><path d="M-40 78h22"/>
@@ -119,18 +145,22 @@ require APP_ROOT . '/partials/header.php';
       </svg>
 
       <div class="chip chip-1" data-depth="18">
-        <span class="chip-ic teal"><?= icon('scan') ?></span>
-        <span><small><?= e(L('VIN detected', 'VIN detectado')) ?></small><b>2021 Honda Civic EX</b></span>
+        <span class="chip-ic teal"><?= icon('home') ?></span>
+        <span><small><?= e(L('Home insurance', 'Seguro de casa')) ?></small><b><?= e(L('Protected', 'Protegida')) ?></b></span>
         <span class="chip-ok"><?= icon('check') ?></span>
       </div>
       <div class="chip chip-2" data-depth="28">
-        <span class="chip-ic teal"><?= icon('id') ?></span>
-        <span><small><?= e(L('Any type of ID', 'Cualquier tipo de ID')) ?></small><b><?= e(L('Accepted', 'Aceptada')) ?></b></span>
+        <span class="chip-ic teal"><?= icon('briefcase') ?></span>
+        <span><small><?= e(L('Business & commercial auto', 'Negocio y auto comercial')) ?></small><b><?= e(L('Covered', 'Asegurado')) ?></b></span>
         <span class="chip-ok"><?= icon('check') ?></span>
       </div>
       <div class="chip chip-3" data-depth="12">
-        <span class="chip-ic amber"><?= icon('shield') ?></span>
-        <span><small><?= e(L('Quote request', 'Cotización')) ?></small><b><?= e(L('Sent to your agent', 'Enviada a tu agente')) ?></b></span>
+        <span class="chip-ic amber"><?= icon('sparkle') ?></span>
+        <span><small><?= e(L('We also handle', 'También hacemos')) ?></small>
+          <b class="rot" aria-label="<?= e(L('Title transfers, license plates, bonds, LLC & DBA', 'Títulos, placas, bonos, LLC y DBA')) ?>"><span class="rot-in" aria-hidden="true">
+            <span><?= e(L('Title transfers', 'Transferencia de títulos')) ?></span><span><?= e(L('License plates', 'Placas y registro')) ?></span><span><?= e(L('Bonds', 'Bonos')) ?></span><span><?= e(L('LLC & DBA', 'LLC y DBA')) ?></span><span><?= e(L('Title transfers', 'Transferencia de títulos')) ?></span>
+          </span></b>
+        </span>
       </div>
     </div>
   </div>
