@@ -406,7 +406,7 @@
       $('.only-extra', node).hidden = i === 0;
       var isOther = item.id_type === 'other';
       $$('.show-state', node).forEach(function (x) { x.hidden = !(item.id_type === 'us' || (isOther && item.id_kind === 'state_id')); });
-      $$('.show-country', node).forEach(function (x) { x.hidden = !(isOther && item.id_kind === 'foreign_license'); });
+      $$('.show-country', node).forEach(function (x) { x.hidden = !(isOther && item.id_kind && item.id_kind !== 'state_id'); });
       $$('.show-other', node).forEach(function (x) { x.hidden = item.id_type !== 'other'; });
       $$('.hide-other', node).forEach(function (x) { x.hidden = item.id_type === 'other'; });
     } else {
@@ -707,7 +707,7 @@
         if (d.id_type === 'other') {
           need(q('id_kind'), !!d.id_kind, T('err.idKind'));
           if (d.id_kind === 'state_id') need(q('license_state'), !!d.license_state, T('err.idState'));
-          if (d.id_kind === 'foreign_license') need(q('license_country'), d.license_country.trim() !== '', T('err.licCountry'));
+          if (d.id_kind && d.id_kind !== 'state_id') need(q('license_country'), d.license_country.trim() !== '', T('err.idCountry'));
         }
         if (d.id_type === 'other' && !num) setErr(q('license_number'), '');
         else need(q('license_number'), /^[A-Z0-9\-*]{4,25}$/.test(num), num ? T('err.licBad') : T('err.licNum'));
@@ -900,7 +900,7 @@
     if (isAuto()) {
       html += section(T('drivers') + ' (' + state.drivers.length + ')', 'users', 'drivers', state.drivers.map(function (d, i) {
         var where = d.id_type === 'us' ? (LABELS.state[d.license_state] || d.license_state)
-          : [LABELS.idKind[d.id_kind] || '', d.id_kind === 'state_id' ? (LABELS.state[d.license_state] || '') : '', d.id_kind === 'foreign_license' ? d.license_country : ''].filter(Boolean).join(' · ');
+          : [LABELS.idKind[d.id_kind] || '', d.id_kind === 'state_id' ? (LABELS.state[d.license_state] || '') : '', d.id_kind && d.id_kind !== 'state_id' ? d.license_country : ''].filter(Boolean).join(' · ');
         var lic = d.license_number.replace(/\s+/g, '');
         return item(esc(d.first + ' ' + d.last) + ' <span class="muted">· ' + esc(i === 0 ? T('you') : LABELS.relationship[d.relationship] || '') + '</span>', [
           esc(T('born')) + ' ' + esc(d.dob),
@@ -1181,6 +1181,16 @@
       }
     });
   }
+
+  /* "Larger text" button, remembered on this device. */
+  var sizeBtn = $('[data-textsize]');
+  function setTextSize(on) {
+    root.classList.toggle('qw-xl', on);
+    if (sizeBtn) sizeBtn.setAttribute('aria-pressed', String(on));
+    try { localStorage.setItem('qw-xl', on ? '1' : '0'); } catch (e) {}
+  }
+  if (sizeBtn) sizeBtn.addEventListener('click', function () { setTextSize(!root.classList.contains('qw-xl')); });
+  try { if (localStorage.getItem('qw-xl') === '1') setTextSize(true); } catch (e) {}
 
   /* ------------------------------------------------------------------ */
   /* Init                                                                */

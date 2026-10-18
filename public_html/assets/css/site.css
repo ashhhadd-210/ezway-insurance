@@ -1344,13 +1344,59 @@ h1, h2, h3, h4 { overflow-wrap: break-word; hyphens: manual; }
 .done-box.is-bad { border-color: var(--danger); animation: shake .45s; }
 .done-e { margin-top: 8px; }
 
-/* Round 3: liability included on every personal-auto vehicle (greyed out) */
+/* Liability: always included on personal-auto vehicles. Looks checked like the others, but locked. */
 .vcov { grid-template-columns: repeat(2, 1fr); }
-.chk-liab { cursor: default; background: var(--sand-100); border-color: var(--line); border-style: dashed; }
-.chk-liab:hover { border-color: var(--line); }
-.chk-liab .chk-box { background: var(--ink-3); border-color: var(--ink-3); opacity: .55; }
-.chk-liab .chk-box .i { transform: scale(1); }
-.chk-liab .chk-ic { background: #fff; color: var(--ink-3); }
-.chk-liab .chk-t b { color: var(--ink-2); }
-.chk-incl { position: absolute; right: 44px; top: 13px; font-size: .68rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; }
-@media (max-width: 640px) { .vcov { grid-template-columns: 1fr; } .chk-incl { position: static; justify-self: start; } }
+.chk-liab { cursor: default; border-color: var(--brand-500); background: var(--brand-50); box-shadow: 0 8px 20px -14px rgba(43, 57, 144, .5); }
+.chk-liab:hover { border-color: var(--brand-500); }
+.chk-liab .chk-box { background: var(--brand-600); border-color: var(--brand-600); }
+.chk-liab .chk-box .i { transform: scale(1); stroke: #fff; }
+.chk-liab .chk-ic { background: var(--brand-600); color: #fff; }
+.chk-liab .chk-ic .i { stroke: #fff; }
+.chk-incl { display: inline-flex; align-items: center; gap: 4px; justify-self: start; margin-top: 2px; font-size: .74rem; font-weight: 800; letter-spacing: .02em; color: var(--brand-700); background: #fff; border: 1px solid var(--brand-100); border-radius: 999px; padding: 3px 9px; }
+.chk-incl .i { width: 12px; height: 12px; }
+@media (max-width: 640px) { .vcov { grid-template-columns: 1fr; } .chk-liab { grid-template-columns: auto 1fr; } .chk-incl { grid-column: 2; } }
+
+/* ==========================================================================
+   Easy-to-read quote form (many customers are older): bigger by default,
+   plus a "Larger text" button for even bigger.
+   ========================================================================== */
+.q-sheet { max-width: 880px; }
+.qw .qw-title h2 { font-size: 1.4rem; }
+.qw .qw-title p { font-size: .98rem; }
+.qw .qw-sl { font-size: .86rem; }
+.qw .qw-head h3 { font-size: clamp(1.75rem, 3.4vw, 2.3rem); }
+.qw .qw-head p { font-size: 1.1rem; line-height: 1.55; }
+.qw .eyebrow { font-size: .86rem; }
+.qw .fld-l, .qw fieldset.seg-fld > legend, .qw .vcov-l { font-size: 1.06rem; }
+.qw .fld-h, .qw .legend-h { font-size: .97rem; }
+.qw .fld-e { font-size: .95rem; }
+.qw .fld input, .qw .fld select, .qw .fld textarea { font-size: 1.12rem; min-height: 58px; padding-left: 16px; }
+.qw .fld input::placeholder, .qw .fld textarea::placeholder { color: #7C86A0; }
+.qw .seg span, .qw .pick span { font-size: 1.04rem; min-height: 52px; }
+.qw .seg-sm span { font-size: .98rem; min-height: 46px; }
+.qw .svc-opt-t b, .qw .opt-body b, .qw .chk-t b, .qw .tc-text b, .qw .done-box b { font-size: 1.1rem; }
+.qw .svc-opt-t small, .qw .opt-body small, .qw .chk-t small, .qw .tc-text small, .qw .done-box small { font-size: .97rem; line-height: 1.45; }
+.qw .qw-card-t h4 { font-size: 1.25rem; }
+.qw .qw-card-t p { font-size: .95rem; }
+.qw .qw-add { font-size: 1.1rem; padding: 18px; }
+.qw .id-note, .qw .qw-secure { font-size: .97rem; }
+.qw .consent { font-size: 1.02rem; }
+.qw .rv-item b { font-size: 1.08rem; }
+.qw .rv-item span { font-size: 1.02rem; }
+.qw .rv-tags em { font-size: .9rem; }
+.qw .tip summary, .qw .tip ul { font-size: 1rem; }
+.qw .vr-ok b { font-size: 1.15rem; }
+.qw-foot .btn { min-height: 56px; font-size: 1.1rem; }
+
+.qw-tools { display: flex; align-items: center; gap: 8px; }
+.qw-size { display: inline-flex; align-items: baseline; gap: 1px; height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line-2); background: #fff; color: var(--ink); font-weight: 800; line-height: 44px; transition: all .2s; }
+.qw-size-a { font-size: .9rem; }
+.qw-size-b { font-size: 1.25rem; margin-right: 8px; }
+.qw-size-t { font-size: .92rem; font-weight: 700; }
+.qw-size:hover { border-color: var(--ink-3); }
+.qw-size[aria-pressed="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+@media (max-width: 640px) { .qw-size-t { display: none; } .qw-size-b { margin-right: 0; } .qw-size { padding: 0 12px; } }
+
+/* "Larger text" on: scale the whole form up another 15% */
+.qw-xl .qw-viewport > *, .qw-xl .qw-foot, .qw-xl .qw-done { zoom: 1.15; }
+.qw-xl .qw-steps { zoom: 1.1; }

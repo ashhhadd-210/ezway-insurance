@@ -40,33 +40,39 @@ function services(): array
             'items' => [
                 ['home', L('Homeowners', 'Dueños de casa')],
                 ['key', L('Renters', 'Inquilinos')],
+                ['building', L('Landlord / rental property', 'Propiedad de renta')],
                 ['truck', L('Mobile & manufactured homes', 'Casas móviles y manufacturadas')],
                 ['car', L('RVs & motorhomes', 'RVs y casas rodantes')],
             ],
             'fields' => [
-                ['key' => 'coverage_for', 'type' => 'radio', 'label' => L('What do you want to insure?', '¿Qué quieres asegurar?'), 'options' => [
-                    'own'    => L('My home (I own it)', 'Mi casa (soy dueño)'),
-                    'renter' => L('Renters insurance', 'Seguro de inquilino'),
-                    'rv'     => L('RV / motorhome', 'RV / casa rodante'),
+                ['key' => 'coverage_for', 'type' => 'radio', 'label' => L('What do you need?', '¿Qué necesitas?'), 'options' => [
+                    'own'      => L('I own my home', 'Soy dueño de mi casa'),
+                    'rent'     => L('I rent (renters insurance)', 'Rento (seguro de inquilino)'),
+                    'landlord' => L('I rent it out to others', 'La rento a otras personas'),
+                    'rv'       => L('RV / motorhome', 'RV / casa rodante'),
                 ]],
-                // Homeowners (house, mobile home, condo)
-                ['key' => 'property_type', 'type' => 'radio', 'label' => L('Type of home', 'Tipo de casa'), 'show_if' => ['coverage_for', ['own']], 'options' => [
-                    'house'  => L('House', 'Casa'),
-                    'mobile' => L('Mobile / manufactured home', 'Casa móvil / manufacturada'),
-                    'condo'  => L('Condo / townhome', 'Condominio / townhome'),
+                ['key' => 'property_type', 'type' => 'radio', 'label' => L('Type of property', 'Tipo de propiedad'), 'show_if' => ['coverage_for', ['own', 'rent', 'landlord']], 'options' => [
+                    'house'     => L('House', 'Casa'),
+                    'mobile'    => L('Mobile home', 'Casa móvil'),
+                    'condo'     => L('Condo / townhome', 'Condominio / townhome'),
+                    'apartment' => L('Apartment', 'Apartamento'),
                 ]],
-                ['key' => 'year_built', 'type' => 'text', 'label' => L('Year built', 'Año de construcción'), 'optional' => true, 'show_if' => ['coverage_for', ['own']],
+                ['key' => 'year_built', 'type' => 'text', 'label' => L('Year built', 'Año de construcción'), 'optional' => true, 'show_if' => ['coverage_for', ['own', 'rent', 'landlord']],
                     'placeholder' => '2005', 'maxlength' => 4, 'inputmode' => 'numeric', 'pattern' => '/^(18|19|20)\d{2}$/'],
-                ['key' => 'roof_year', 'type' => 'text', 'label' => L('Year the roof was last replaced', 'Año en que se cambió el techo'), 'optional' => true, 'show_if' => ['coverage_for', ['own']],
+                ['key' => 'insured', 'type' => 'radio', 'label' => L('Is it insured right now?', '¿Tiene seguro actualmente?'), 'optional' => true, 'show_if' => ['coverage_for', ['own', 'rent', 'landlord']], 'options' => [
+                    'yes' => L('Yes', 'Sí'), 'no' => L('No', 'No'),
+                ]],
+                // Homeowners and landlords (houses and mobile homes too)
+                ['key' => 'roof_year', 'type' => 'text', 'label' => L('Year the roof was last replaced', 'Año en que se cambió el techo'), 'optional' => true, 'show_if' => ['coverage_for', ['own', 'landlord']],
                     'placeholder' => '2018', 'maxlength' => 4, 'inputmode' => 'numeric', 'pattern' => '/^(19|20)\d{2}$/',
                     'hint' => L('Not sure? Leave it blank.', '¿No sabes? Déjalo en blanco.')],
-                ['key' => 'claims', 'type' => 'radio', 'label' => L('Any home insurance claims in the last 5 years?', '¿Algún reclamo de seguro de casa en los últimos 5 años?'), 'show_if' => ['coverage_for', ['own']], 'options' => [
+                ['key' => 'claims', 'type' => 'radio', 'label' => L('Any home insurance claims in the last 5 years?', '¿Algún reclamo de seguro de casa en los últimos 5 años?'), 'show_if' => ['coverage_for', ['own', 'landlord']], 'options' => [
                     'no' => L('No', 'No'), 'yes' => L('Yes', 'Sí'),
                 ]],
                 ['key' => 'claims_info', 'type' => 'textarea', 'label' => L('Tell us about the claims', 'Cuéntanos de los reclamos'), 'optional' => true, 'show_if' => ['claims', ['yes']],
                     'placeholder' => L('What happened, the year and the amount paid, if you know it', 'Qué pasó, el año y cuánto pagaron, si lo sabes')],
                 // Renters
-                ['key' => 'additional_insured', 'type' => 'radio', 'label' => L('Add an additional insured?', '¿Agregar un asegurado adicional?'), 'show_if' => ['coverage_for', ['renter']],
+                ['key' => 'additional_insured', 'type' => 'radio', 'label' => L('Add an additional insured?', '¿Agregar un asegurado adicional?'), 'show_if' => ['coverage_for', ['rent']],
                     'hint' => L('For example your landlord, property manager or a roommate.', 'Por ejemplo tu landlord, administrador o compañero de casa.'), 'options' => [
                     'no' => L('No', 'No'), 'yes' => L('Yes', 'Sí'),
                 ]],

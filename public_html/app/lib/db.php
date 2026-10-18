@@ -138,6 +138,12 @@ function migrate(PDO $pdo): void
         }
     }
 
+    try {
+        demo_seed();
+    } catch (Throwable $ex) {
+        error_log('Preview sample data failed: ' . $ex->getMessage());
+    }
+
     @file_put_contents($marker, date('c'));
 }
 

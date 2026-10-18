@@ -29,5 +29,6 @@ require APP_ROOT . '/lib/mailer.php';
 require APP_ROOT . '/lib/vin.php';
 require APP_ROOT . '/lib/content.php';
 require APP_ROOT . '/lib/quote.php';
+require APP_ROOT . '/lib/demo.php';
 
 redirect_disabled_spanish();

@@ -47,9 +47,12 @@ $services = services();
         <p data-qw-steplabel><?= e(L('About 3 minutes', 'Unos 3 minutos')) ?></p>
       </div>
     </div>
+    <div class="qw-tools">
+    <button class="qw-size" type="button" data-textsize aria-pressed="false" title="<?= e(L('Make the text bigger', 'Agrandar el texto')) ?>"><span class="qw-size-a" aria-hidden="true">A</span><span class="qw-size-b" aria-hidden="true">A</span><span class="qw-size-t"><?= e(L('Larger text', 'Letra grande')) ?></span></button>
     <?php if ($qwMode === 'modal'): ?>
     <button class="qw-close" type="button" data-qclose aria-label="<?= e(L('Close quote form', 'Cerrar cotización')) ?>"><?= icon('x') ?></button>
     <?php endif; ?>
+    </div>
   </div>
 
   <ol class="qw-steps" data-qw-steps></ol>
@@ -227,8 +230,8 @@ $services = services();
                 <label><input type="radio" name="coverage.currently_insured" value="no"><span><?= e(L('No', 'No')) ?></span></label>
               </div>
             </div>
-            <?= $fld(e(L('Current insurance company', 'Compañía de seguro actual')), '<input name="coverage.current_carrier" maxlength="60" placeholder="' . e(L('e.g. State Farm', 'Ej. State Farm')) . '">', 'if-insured') ?>
-            <?= $fld(e(L('When does it expire?', '¿Cuándo vence?')), '<input name="coverage.current_expiration" type="date">', 'if-insured', e(L('So your new policy starts right on time.', 'Para que tu nueva póliza empiece a tiempo.'))) ?>
+            <?= $fld(e(L('Current insurance company', 'Compañía de seguro actual')), '<input name="coverage.current_carrier" maxlength="60" placeholder="' . e(L('e.g. State Farm', 'Ej. State Farm')) . '">', 'if-insured', '', ' hidden') ?>
+            <?= $fld(e(L('When does it expire?', '¿Cuándo vence?')), '<input name="coverage.current_expiration" type="date">', 'if-insured', e(L('So your new policy starts right on time.', 'Para que tu nueva póliza empiece a tiempo.')), ' hidden') ?>
             <?= $fld(e(L('Anything else we should know?', '¿Algo más que debamos saber?')), '<textarea name="coverage.comments" rows="3" maxlength="1000" placeholder="' . e(L('Recent tickets or accidents, discounts you\'re asking about, best time to call…', 'Multas o accidentes recientes, descuentos, mejor hora para llamarte…')) . '"></textarea>', 'span2') ?>
           </div>
         </fieldset>
@@ -358,8 +361,8 @@ $services = services();
     <p class="id-note show-other"><?= icon('check') ?> <?= e(L('No license? No problem. A foreign license, state ID, passport, matrícula consular or any other ID works.', '¿Sin licencia? No hay problema. Sirve licencia extranjera, ID del estado, pasaporte, matrícula consular o cualquier otra ID.')) ?></p>
     <div class="grid g2">
       <?= $fld(e(L('Type of ID', 'Tipo de ID')), '<select data-f="id_kind"><option value="">' . e(L('Choose…', 'Elige…')) . '</option>' . implode('', array_map(fn ($k, $v) => '<option value="' . $k . '">' . e($v) . '</option>', array_keys(id_kinds()), id_kinds())) . '</select>', 'show-other') ?>
-      <?= $fld(e(L('Issuing state', 'Estado que la emitió')), '<select data-f="license_state">' . $stateOptions(L('Choose…', 'Elige…')) . '</select>', 'show-state') ?>
-      <?= $fld(e(L('Issuing country', 'País que la emitió')), '<input data-f="license_country" list="qw-countries" maxlength="60" autocomplete="off" placeholder="' . e(L('e.g. Mexico', 'Ej. México')) . '">', 'show-country') ?>
+      <?= $fld(e(L('Issuing state', 'Estado que la emitió')), '<select data-f="license_state">' . $stateOptions(L('Choose…', 'Elige…')) . '</select>', 'show-state', '', ' hidden') ?>
+      <?= $fld(e(L('Issuing country', 'País que la emitió')), '<input data-f="license_country" list="qw-countries" maxlength="60" autocomplete="off" placeholder="' . e(L('e.g. Mexico', 'Ej. México')) . '">', 'show-country', '', ' hidden') ?>
       <?= $fld('<span class="hide-other">' . e(L('License number', 'Número de licencia')) . '</span><span class="show-other">' . e(L('ID number', 'Número de ID')) . ' ' . $opt . '</span>', '<span class="fld-wrap"><input data-f="license_number" maxlength="25" autocomplete="off" autocapitalize="characters" spellcheck="false" class="mono"><span class="fld-lock">' . icon('lock') . '</span></span>') ?>
     </div>
   </article>
@@ -378,11 +381,11 @@ $services = services();
     </div>
     <p class="vcov-l"><?= e(L('Coverage for this vehicle', 'Cobertura para este vehículo')) ?></p>
     <div class="vcov">
-      <div class="chk chk-liab" data-liab-chip>
+      <div class="chk chk-liab" data-liab-chip role="checkbox" aria-checked="true" aria-disabled="true" title="<?= e(L('Liability is required in Texas and always included', 'La responsabilidad civil es obligatoria en Texas y siempre está incluida')) ?>">
         <span class="chk-box" aria-hidden="true"><?= icon('check') ?></span>
         <span class="chk-ic"><?= icon('scale') ?></span>
         <span class="chk-t"><b><?= e(L('Liability · Texas minimum', 'Responsabilidad civil · Mínimo de Texas')) ?></b><small><?= e(L('30/60/25 · Cheapest price possible', '30/60/25 · El precio más barato posible')) ?></small></span>
-        <span class="chk-incl"><?= e(L('Included', 'Incluido')) ?></span>
+        <span class="chk-incl"><?= icon('lock') ?><?= e(L('Always included', 'Siempre incluido')) ?></span>
       </div>
       <label class="chk">
         <input type="checkbox" data-f="full_coverage">

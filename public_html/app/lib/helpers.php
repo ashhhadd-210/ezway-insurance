@@ -55,12 +55,17 @@ function site_url(string $path = ''): string
     return $base . '/' . ltrim($path, '/');
 }
 
-/** Asset URL with a cache-busting version based on the file's last change. */
+/**
+ * Asset URL with a cache-busting version taken from the file's contents.
+ * (Not the modified time: some hosts, like Vercel, give every file the same
+ * timestamp, so browsers would keep serving an old version for a year.)
+ */
 function asset(string $path): string
 {
+    static $versions = [];
     $file = PUBLIC_ROOT . '/assets/' . ltrim($path, '/');
-    $v = is_file($file) ? filemtime($file) : 0;
-    return url('assets/' . ltrim($path, '/')) . '?v=' . $v;
+    $versions[$file] ??= is_file($file) ? substr(md5_file($file), 0, 10) : '0';
+    return url('assets/' . ltrim($path, '/')) . '?v=' . $versions[$file];
 }
 
 function now_utc(): string

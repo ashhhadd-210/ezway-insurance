@@ -8,6 +8,10 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $action = $_POST['action'] ?? '';
+    if (demo_enabled() && in_array($action, ['password', 'profile', 'remove'], true)) {
+        flash('Account changes are turned off on the preview. They work on your own site.', 'err');
+        redirect(url('admin/account.php'));
+    }
     $full = db_one('SELECT * FROM admins WHERE id = ?', [$me['id']]);
 
     if ($action === 'password') {

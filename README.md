@@ -112,6 +112,10 @@ Use HostGator for the real site.
 
 To redeploy from this folder: `vercel deploy --prod`. For a stable encryption key on the preview, set an `APP_KEY` environment variable in Vercel; any random 32+ character string works.
 
+### Preview dashboard
+
+With `DEMO_MODE=1`, `DEMO_ADMIN_EMAIL` and `DEMO_ADMIN_PASSWORD` set in Vercel, every fresh start of the preview creates that agent login and fills the dashboard with sample requests (`app/lib/demo.php`), and the dashboard shows a "Preview" banner. Never set these on the real site.
+
 ## Preview locally
 
 ```bash

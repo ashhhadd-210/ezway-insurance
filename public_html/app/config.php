@@ -136,4 +136,12 @@ return [
     // automatically in /storage/app.key. BACK THAT FILE UP: without it, saved
     // license numbers cannot be decrypted.
     'app_key' => getenv('APP_KEY') ?: '',
+
+    // Preview mode for the Vercel preview only (sample data + a ready-made agent
+    // login, set with environment variables). Leave off on the real site.
+    'demo' => [
+        'enabled'  => getenv('DEMO_MODE') === '1',
+        'email'    => getenv('DEMO_ADMIN_EMAIL') ?: '',
+        'password' => getenv('DEMO_ADMIN_PASSWORD') ?: '',
+    ],
 ];

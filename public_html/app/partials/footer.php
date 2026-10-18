@@ -41,6 +41,7 @@ $js = [
         'company' => L('Enter your company name.', 'Escribe el nombre de tu compañía.'),
         'trade' => L('Enter your type of business or trade.', 'Escribe tu tipo de negocio u oficio.'),
         'residence' => L('Tell us if you own or rent your home.', 'Dinos si eres dueño o rentas tu casa.'),
+        'idCountry' => L('Enter the country that issued the ID.', 'Escribe el país que emitió la ID.'),
         'idState' => L('Choose the state that issued the ID.', 'Elige el estado que emitió la ID.'),
         'driversDone' => L('Add another driver, or check "No more drivers to add".', 'Agrega otro conductor, o marca "No hay más conductores".'),
         'vehiclesDone' => L('Add another vehicle, or check "No more vehicles to add".', 'Agrega otro vehículo, o marca "No hay más vehículos".'),

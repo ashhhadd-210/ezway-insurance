@@ -53,6 +53,9 @@ function admin_head(string $title, string $active = '', bool $bare = false): voi
 <?php endif; ?>
 <main class="a-main">
 <?php
+    if (!$bare && demo_enabled()): ?>
+  <div class="a-flash a-flash-info a-demo"><?= icon('info') ?><span><b>Preview dashboard.</b> The requests marked "Sample request for the preview" are examples. Quotes you send from the preview website also show up here, but the preview resets from time to time. On your own hosting everything is saved permanently.</span></div>
+<?php endif;
     $f = $bare ? null : flash();
     if ($f): ?>
   <div class="a-flash a-flash-<?= e($f[0]) ?>" role="status"><?= icon($f[0] === 'ok' ? 'check' : 'alert') ?><?= e($f[1]) ?></div>

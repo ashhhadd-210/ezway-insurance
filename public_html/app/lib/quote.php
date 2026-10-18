@@ -258,11 +258,9 @@ function validate_auto(array $in, string $serviceKey, array &$err): array
             if ($row['id_kind'] === 'state_id') {
                 $row['license_country'] = '';
                 if (!isset(US_STATES[$row['license_state']])) $err[$p . 'license_state'] = L('Choose the state that issued the ID.', 'Elige el estado que emitió la ID.');
-            } elseif ($row['id_kind'] === 'foreign_license') {
+            } elseif ($row['id_kind'] !== '') {
                 $row['license_state'] = '';
-                if ($row['license_country'] === '') $err[$p . 'license_country'] = L('Enter the issuing country.', 'Escribe el país que la emitió.');
-            } else {
-                $row['license_state'] = $row['license_country'] = '';
+                if ($row['license_country'] === '') $err[$p . 'license_country'] = L('Enter the country that issued the ID.', 'Escribe el país que emitió la ID.');
             }
         }
         if ($row['license_number'] === '' ? $numberRequired : !preg_match('/^[A-Z0-9\-*]{4,25}$/', $row['license_number'])) {
