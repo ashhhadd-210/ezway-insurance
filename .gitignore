@@ -10,3 +10,6 @@ public_html/storage/*
 # Earlier standalone sample sent to the client
 quote-sample.html
 .env*
+
+# Upload package (rebuilt per release)
+ezway-hostgator.zip

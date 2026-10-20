@@ -103,7 +103,8 @@ return [
         'notify_to'   => 'ezwayuw@gmail.com',
         // Sender address. Use an address on the site's own domain
         // (create it in cPanel > Email Accounts) so mail isn't flagged as spam.
-        'from'        => 'no-reply@yourdomain.com',      // CHANGE ME once the domain is known
+        // Leave empty to use no-reply@<your domain> automatically.
+        'from'        => '',
         'from_name'   => 'EZ Way Insurance',
         // Send the customer a "we got your request" email.
         'confirm_customer' => true,

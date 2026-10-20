@@ -9,7 +9,7 @@ defined('APP') or exit;
  */
 function send_mail(string $to, string $subject, string $html, string $text, ?string $replyTo = null): bool
 {
-    $from = (string) cfg('mail.from');
+    $from = mail_from();
     $fromName = (string) cfg('mail.from_name');
     if ($to === '' || $from === '') {
         return false;
@@ -107,6 +107,17 @@ function smtp_send(string $from, string $to, array $headers, string $body): void
     $cmd($data . "\r\n.", [250]);
     fwrite($sock, "QUIT\r\n");
     fclose($sock);
+}
+
+/** Sender address: mail.from, or no-reply@ the site's own domain. */
+function mail_from(): string
+{
+    $from = (string) cfg('mail.from');
+    if ($from !== '') {
+        return $from;
+    }
+    $host = parse_url(site_url(), PHP_URL_HOST) ?: ($_SERVER['SERVER_NAME'] ?? 'localhost');
+    return 'no-reply@' . preg_replace('/^www\./i', '', $host);
 }
 
 /** Shared HTML wrapper for all outgoing emails. */

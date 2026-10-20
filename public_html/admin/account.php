@@ -12,6 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash('Account changes are turned off on the preview. They work on your own site.', 'err');
         redirect(url('admin/account.php'));
     }
+    if ($action === 'test_email') {
+        $to = (string) cfg('mail.notify_to');
+        $ok = send_mail($to, 'Test email from your website',
+            email_layout('Your website email is working', '<p style="margin:0;line-height:1.6">This is a test from your dashboard. New quote requests and messages will arrive at this address.</p>'),
+            "Your website email is working. New quote requests and messages will arrive at this address.");
+        flash($ok ? "Test email sent to $to. Check the inbox (and the spam folder the first time)." : 'The test email could not be sent. Check the email settings in app/config.php (storage/mail.log has details).', $ok ? 'ok' : 'err');
+        redirect(url('admin/account.php'));
+    }
     $full = db_one('SELECT * FROM admins WHERE id = ?', [$me['id']]);
 
     if ($action === 'password') {
@@ -88,6 +96,12 @@ admin_head('Account', 'account');
       <label class="a-fld"><span>Confirm new password</span><input name="new2" type="password" autocomplete="new-password" required><?= $err('new2') ?></label>
       <button class="a-btn a-btn-primary" type="submit">Update password</button>
     </form>
+  </section>
+
+  <section class="a-card a-span-2">
+    <h2><?= icon('mail') ?> Email notifications</h2>
+    <p class="a-muted">New quote requests and messages are emailed to <b><?= e(cfg('mail.notify_to')) ?></b> from <b><?= e(mail_from()) ?></b>.</p>
+    <form method="post" style="margin-top:14px"><?= csrf_field() ?><input type="hidden" name="action" value="test_email"><button class="a-btn" type="submit"><?= icon('mail') ?> Send a test email</button></form>
   </section>
 
   <section class="a-card a-span-2">

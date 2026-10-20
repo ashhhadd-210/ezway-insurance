@@ -232,7 +232,7 @@ $services = services();
             </div>
             <?= $fld(e(L('Current insurance company', 'Compañía de seguro actual')), '<input name="coverage.current_carrier" maxlength="60" placeholder="' . e(L('e.g. State Farm', 'Ej. State Farm')) . '">', 'if-insured', '', ' hidden') ?>
             <?= $fld(e(L('When does it expire?', '¿Cuándo vence?')), '<input name="coverage.current_expiration" type="date">', 'if-insured', e(L('So your new policy starts right on time.', 'Para que tu nueva póliza empiece a tiempo.')), ' hidden') ?>
-            <?= $fld(e(L('Anything else we should know?', '¿Algo más que debamos saber?')), '<textarea name="coverage.comments" rows="3" maxlength="1000" placeholder="' . e(L('Recent tickets or accidents, discounts you\'re asking about, best time to call…', 'Multas o accidentes recientes, descuentos, mejor hora para llamarte…')) . '"></textarea>', 'span2') ?>
+            <?= $fld(e(L('Anything else we should know?', '¿Algo más que debamos saber?')), '<textarea name="coverage.comments" rows="3" maxlength="1000" placeholder="' . e(L('Recent tickets or accidents, SR-22, discounts you\'re asking about, best time to call…', 'Multas o accidentes recientes, SR-22, descuentos, mejor hora para llamarte…')) . '"></textarea>', 'span2', icon('alert') . ' <b>' . e(L('Let us know if you need an SR-22.', 'Avísanos si necesitas un SR-22.')) . '</b>') ?>
           </div>
         </fieldset>
       </section>
