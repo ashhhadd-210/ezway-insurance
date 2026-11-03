@@ -1,133 +1,161 @@
 # EZ Way Insurance website
 
-A custom-coded website for EZ Way Insurance / Aseguranza (client: hctor24). It has 4 pages, a Progressive-style multi-step quote form, and a password-protected dashboard. It runs on PHP and MySQL, which HostGator shared hosting supports out of the box. There is no framework and no build step.
+A custom website for EZ Way Insurance, an independent agency with four offices in Austin, Texas
+that sells car, home and business insurance and handles titles, plates, bonds and LLC
+registration. The agency wanted a fast site that works on phones, and a quote form as easy as the
+big insurers' forms, so that customers send everything an agent needs to price a policy in one go.
+Many of its customers have no US driving licence, so the form had to accept any kind of ID.
 
-```
-website/
-├── public_html/        ← upload the CONTENTS of this folder to HostGator's public_html
-│   ├── index.php       Home
-│   ├── about.php       About
-│   ├── auto-insurance.php  Personal & commercial auto, coverages, FAQ (coverage.php redirects here)
-│   ├── services.php    Home, business & contractors, bonds, title & registration, LLC/DBA
-│   ├── contact.php     Contact + message form
-│   ├── quote.php       Full-page quote form (the pop-up version is on every page)
-│   ├── privacy.php     Privacy policy (template – have it reviewed)
-│   ├── admin/          Password-protected dashboard
-│   ├── api/            quote.php, contact.php, vin.php (form endpoints)
-│   ├── app/            config.php, code, page partials (blocked from the web)
-│   ├── assets/         css, js, img
-│   └── storage/        database (if SQLite), encryption key, logs (blocked from the web)
-├── api/index.php       Vercel entry point (Vercel preview only, not uploaded to HostGator)
-├── vercel.json         Vercel config (Vercel preview only)
-├── dev-router.php      local preview only (not uploaded)
-└── tools/              HTML used to generate og-image.png and apple-touch-icon.png
-```
+I designed and built it end to end: the pages and illustrations, the multi-step quote form with
+live VIN lookup, the server-side validation and spam protection, the encryption of ID numbers,
+the agent dashboard, the email notifications, the Spanish version, and the deployment to shared
+hosting plus a Vercel preview for the client. It is plain PHP with no framework and no build step,
+so it runs on any cPanel host.
 
-## What the client asked for, and where it lives
+![Home page](docs/screenshots/01-home.png)
 
-| Request from the chat | Where |
+## What it does
+
+**For customers**
+- Home, auto insurance, services, about, contact and locations pages, with a floating
+  "Start your quote" button on every page that opens the quote form as a pop-up
+- One quote form for seven services: personal auto, commercial auto, home and renters, business
+  and contractors, bonds, title and registration, and LLC registration
+- For auto, seven steps: Service, You, Address, Drivers, Vehicles, Coverage, Review
+- Up to 8 drivers and 6 vehicles; driver 1 is filled in from the first step
+- Each driver chooses a US licence or another ID (foreign licence, passport, matrícula consular,
+  state ID), then the issuing state or country and the number
+- Vehicles are entered by VIN only; the form decodes it as you type and shows the year, make,
+  model and trim
+- Per vehicle: full coverage with a deductible, financed or leased with the lienholder, roadside
+  and rental; per policy: PIP, uninsured motorist and the liability limits (commercial auto offers
+  higher limits)
+- City and state are filled in from the ZIP code; progress survives a page reload; a
+  "Larger text" switch for older customers
+- Hours for the four offices with a live Open or Closed badge in Austin time
+
+**For agents**
+- A dashboard listing every request, with counters for unread, today, this week and won
+- Filters by service and by status (New, Contacted, Quote sent, Won, Closed) and a search over
+  name, company, phone, email, VIN and reference
+- A page per request: contact, drivers, vehicles with VIN status, coverage, call, text and email
+  buttons, status, internal notes, print, and next and previous
+- ID numbers are masked; an agent reveals one with a click
+- A messages inbox for the contact form, a CSV export, and team accounts
+- An email to the agency for every request and a confirmation email to the customer, in the
+  customer's language
+
+## How the quote form works
+
+- **One definition, four uses:** services, their questions, liability sets, deductibles and ID
+  types are defined once in `app/lib/content.php` and `app/lib/quote.php`, and drive the form,
+  the server-side validation, the emails and the dashboard
+- **VIN lookup:** `api/vin.php` checks the format, asks NHTSA's free vPIC service and records
+  whether the check digit is valid; results are cached in a `vin_cache` table. If NHTSA is down
+  the customer carries on and the vehicle shows as "Not verified" in the dashboard
+- **Saved before anything else:** a request is written to the database before any email is sent,
+  so a mail failure never loses a lead; mail errors go to `storage/mail.log`
+- **Drafts:** the form state is kept in `sessionStorage` as the customer types, and cleared once
+  the request is sent
+- **Bilingual by construction:** every string is written as `L('English', 'Español')`, every page
+  also lives under `/es/`, and the request remembers its language. The Spanish site is built but
+  switched off in `config.php` until the client turns it on
+
+## How it protects customer data
+
+- **Encrypted ID numbers:** licence and ID numbers are encrypted with AES-256-GCM (random 12-byte
+  IV, auth tag stored with the ciphertext) under a key kept in `storage/app.key` or `APP_KEY`.
+  Emails and the CSV export show only the last four digits
+- **Spam and abuse:** browser and server validation, a honeypot field, a minimum fill-time token,
+  a same-origin check, per-visitor limits (5 quotes and 5 messages an hour by default, 60 VIN
+  lookups an hour) and optional Cloudflare Turnstile. Visitor IPs are stored only as a keyed hash
+- **Dashboard sign-in:** 5 failed attempts per account in 15 minutes, or 25 per IP in an hour,
+  lock sign-in; sessions are `SameSite=Strict` and regenerated on login; admin forms carry a CSRF
+  token
+- **Headers:** a Content-Security-Policy, `nosniff`, `SAMEORIGIN` framing, a strict referrer
+  policy and a locked-down Permissions-Policy; the dashboard adds `no-store` and `noindex`
+- **Blocked folders:** `app/` and `storage/` are denied by `.htaccess` (and by `dev-router.php`
+  locally); CSV cells that start with `=`, `+`, `-` or `@` are escaped against formula injection
+
+## Stack
+
+| Layer | Choice |
 |---|---|
-| 4 fast, mobile-friendly pages with his logo/branding | Home, About, Coverage, Contact. Logo is set in `app/config.php` (`site.logo`) |
-| Floating "Quote now" / "Start your quote" on every page | `.fab` button in `app/partials/footer.php`. Opens the quote pop-up on every page |
-| Form similar to the Progressive link | `app/partials/quote-wizard.php` + `assets/js/quote.js`. 6 steps: You → Address → Drivers → Vehicles → Coverage → Review |
-| Start with name and info | Step 1 (name, date of birth, phone, email, best way to reach you) and Step 2 (address, with city and state filled in from the ZIP) |
-| "+" to add additional drivers | Step 3. Up to 8 drivers. Driver 1 is pre-filled from Step 1 |
-| ID type: US license or foreign license + license number | Each driver has a US / Foreign toggle, then the issuing state or country, then the license number |
-| "+" to add vehicles, VIN only | Step 4. Up to 6 vehicles |
-| Check the VIN and show what vehicle it is | Live lookup with the free NHTSA database. Shows year, make, model and trim as they type |
-| Full coverage (comp/collision) checkbox next to the VIN | Per-vehicle checkbox, with a deductible picker |
-| Roadside and rental next to the VIN | Per-vehicle checkboxes |
-| PIP and uninsured motorist | Step 5, for the whole policy, plus a choice of liability limits |
-| Secure quote form, spam protection, validation | Browser + server validation, honeypot, timing check, rate limit, same-site check, optional Cloudflare Turnstile |
-| License numbers stored encrypted, shown only in the dashboard | AES-256-GCM (`app/lib/crypto.php`). Emails and the CSV export show only the last 4 digits |
-| Password-protected dashboard to view every quote | `/admin`. List, search, filters, full details, status, notes, CSV export, multiple users |
-| Email notification for each request | Sent to `mail.notify_to`. The customer also gets a confirmation email |
-| Round 2: full Spanish version, including the quote form (**switched off**: add-on, turn on with `'spanish' => true` in `config.php`) | Every page is also at `/es/…`, with an EN/ES switch in the header. Copy is written inline as `L('English', 'Español')`. Requests remember the language: the dashboard flags Spanish customers and their confirmation email goes out in Spanish |
-| Round 2: more than car insurance | Services page + quote form for home, business & contractors (GL, workers comp, builders risk, equipment, fidelity bonds), bonds, title & registration (transfers, plates, temp plates, renewals, salvage, out-of-state) and LLC/DBA. All defined once in `app/lib/content.php` |
-| Round 2: personal vs commercial auto | Commercial asks for the company name and offers higher limits (up to $1M combined) |
-| Round 2: lienholder when full coverage is chosen | Per vehicle: financed/leased yes/no, plus the lienholder name |
-| Round 2: "No license, no problem": any ID accepted | Drivers can use a US license, foreign license or other ID (passport, matrícula consular, state ID). Numbers are encrypted |
-| Round 2: 4 Austin offices with different hours | Set in `config.php` under `site.offices`. Shown on Home, Locations and the footer with a live "Open / Closed" badge (Austin time), plus SEO data for each office |
-| Basic SEO | Titles/descriptions, canonical URLs, Open Graph image, JSON-LD (InsuranceAgency, FAQPage), sitemap.xml, robots.txt, clean URLs |
-| Artwork / UI design | Custom SVG illustrations and animations, icon set, share image, favicons |
-| Deploy on HostGator | Steps below |
+| Server | PHP 8.1+, no framework, no Composer dependencies |
+| Data | SQLite with no setup, or MySQL on cPanel; tables created on first visit |
+| Front end | Hand-written HTML, CSS and vanilla JavaScript, custom SVG illustrations |
+| Lookups | NHTSA vPIC (VIN), zippopotam.us (ZIP to city and state) |
+| Email | PHP `mail()` or SMTP through a mailbox on the agency's domain |
+| Hosting | HostGator shared hosting (production), Vercel with `vercel-php` (client preview) |
 
-## Deploying to HostGator (cPanel)
+## Engineering
 
-1. **PHP version.** In cPanel > *MultiPHP Manager*, set the domain to **PHP 8.1 or newer** (8.2 or 8.3 recommended).
-2. **Database (recommended).** In cPanel > *MySQL® Databases*:
-   - create a database, e.g. `cpuser_quotes`
-   - create a user with a strong password
-   - add the user to the database with **ALL PRIVILEGES**
+- **Go-live check:** `tools/smoke-test.sh <url>` checks every page, the 301 and 404 routes, that
+  `app/` and `storage/` return 403, HTTPS, the VIN lookup, cache-busted assets, that the agency
+  email is not shown publicly and that the dashboard responds; `--send-quote` also submits one
+  marked test quote end to end
+- **Setup page:** the first visit to `/admin/` checks the PHP version, storage permissions,
+  OpenSSL, the database, the notification address and HTTPS, then creates the first account
+- **SEO:** titles and descriptions, canonical URLs, an Open Graph image, JSON-LD
+  (one InsuranceAgency per office, FAQPage), `sitemap.xml`, `robots.txt` and clean URLs
+- **Preview mode:** with `DEMO_MODE=1`, `app/lib/demo.php` creates an agent login and eight sample
+  requests so the client could try the dashboard on Vercel, which has no permanent disk
+- There are no automated unit tests; the smoke test is the release check
 
-   (SQLite also works with no setup. MySQL is easier to back up from cPanel.)
-3. **Sender mailbox.** In cPanel > *Email Accounts*, create e.g. `no-reply@hisdomain.com`. Mail sent from the site's own domain is much less likely to land in spam.
-4. **Edit `public_html/app/config.php`:**
-   - `site.*`: agency name, legal name, phone, email, address, hours, social links, and `url` (e.g. `https://www.hisdomain.com`)
-   - `db.driver` → `mysql`, then the host (`localhost`), database name, user and password from step 2
-   - `mail.notify_to`: the inbox that should receive quote requests. `mail.from`: the mailbox from step 3
-   - For the most reliable email, set `mail.transport` to `smtp` and fill in `mail.smtp` (host `mail.hisdomain.com`, port 465, `ssl`, the mailbox and its password)
-   - Optional: add free Cloudflare Turnstile keys under `security`
-5. **Upload.** Zip the *contents* of `public_html/`, including the hidden `.htaccess` files. In cPanel > *File Manager* > `public_html`, upload the zip and extract it. Make sure `public_html/storage` is writable (755 is fine on HostGator).
-6. **SSL.** In cPanel > *SSL/TLS Status*, run AutoSSL. Once `https://` works, uncomment the two "Force HTTPS" lines in `public_html/.htaccess`.
-7. **Create the dashboard login.** Visit `https://hisdomain.com/admin/`. The first visit opens a setup page that:
-   - checks PHP, storage, database, email and HTTPS
-   - asks you to create the first account
+## Screenshots
 
-   Give the client his own account under *Account → Team access*.
-8. **Test end to end.**
-   - Send a quote from the site with a real VIN.
-   - Confirm it appears in `/admin` and that the notification email arrives.
-   - Send a contact message.
-9. **Back up `storage/app.key`.** It is created on the first visit. License numbers cannot be decrypted without it. Alternatively, paste its contents into `app_key` in `config.php`.
-10. Submit `https://hisdomain.com/sitemap.xml` in Google Search Console.
+| | |
+|---|---|
+| ![Auto insurance](docs/screenshots/02-auto-insurance.png) | ![Services](docs/screenshots/03-services.png) |
+| Auto insurance page | Services: home, business, bonds, title and LLC |
+| ![Quote: service](docs/screenshots/04-quote-service.png) | ![Quote: drivers](docs/screenshots/05-quote-drivers.png) |
+| Quote form, step 1: pick a service | Drivers: US licence or other ID, number encrypted |
+| ![Quote: VIN lookup](docs/screenshots/06-quote-vin-lookup.png) | ![Quote: coverage](docs/screenshots/07-quote-coverage.png) |
+| Vehicles: the VIN decoded live from NHTSA | Coverage: PIP, uninsured motorist, current insurer |
+| ![Dashboard](docs/screenshots/08-admin-requests.png) | ![Request detail](docs/screenshots/09-admin-quote-detail.png) |
+| Agent dashboard: counters, filters, requests | A request: drivers, vehicles, coverage, status, notes |
+| ![Messages](docs/screenshots/10-admin-messages.png) | ![Phone](docs/screenshots/11-home-phone.png) |
+| Contact-form inbox | Home page on a phone |
 
-## Branding
+All screenshots show the site running locally on PHP's built-in server in preview mode. Every
+customer in the dashboard is a built-in sample with a 555 phone number and an example.com email,
+and the agency's phone number was replaced with a 555 number for the screenshots.
 
-- **Logo:** the EZ Way logo is in `public_html/assets/img/`, set under `site` in `config.php`:
-  - `logo.png`: the full logo with a transparent background, used on light backgrounds
-  - `logo-white.png`: the footer and dashboard sidebar
-  - `logo-mark.png`: the star icon, used in the quote form and to build `favicon.png` and `apple-touch-icon.png`
-- **Colors:** the CSS variables at the top of `assets/css/site.css`:
-  - `--brand-*` (the logo's royal blue, #2B3990)
-  - `--cyan-*` (the logo's light cyan)
-  - `--amber-*` (accent)
-  - `--navy-*` (dark)
+## Running it locally
 
-  The dashboard has its own copy at the top of `assets/css/admin.css`.
-- **Share image & icon:** open `tools/og-image.html` and `tools/apple-touch-icon.html`. Change the name and colors, then screenshot them at 1200×630 and 180×180 into `assets/img/og-image.png` and `assets/img/apple-touch-icon.png`.
-- **Copy:** page text is in the page files, written as `L('English', 'Español')` so both languages sit side by side. Services (and the quote-form questions for each) and auto coverage descriptions are in `app/lib/content.php`. Quote-form options (liability levels, deductibles, relationships, ID types) are at the top of `app/lib/quote.php`. Text used by the scripts is in `app/partials/footer.php` (`$js`).
-- **Business details:** phone, email, offices and hours, years in business and number of insurance companies are all in `config.php` under `site`. Add the Texas agency license number to `site.license` to show it in the footer.
-
-## Vercel preview
-
-The repo also deploys to Vercel as a **client preview**. Vercel uses `vercel.json`, which runs PHP with the community `vercel-php` runtime, and `api/index.php`, which maps URLs to `public_html`.
-
-Vercel has no permanent disk. The SQLite database, sessions and encryption key live in `/tmp`, so saved quotes and dashboard logins can reset at any time. Everything else works as on HostGator:
-
-- pages and animations
-- the quote form, VIN lookup and ZIP autofill
-
-Use HostGator for the real site.
-
-To redeploy from this folder: `vercel deploy --prod`. For a stable encryption key on the preview, set an `APP_KEY` environment variable in Vercel; any random 32+ character string works.
-
-### Preview dashboard
-
-With `DEMO_MODE=1`, `DEMO_ADMIN_EMAIL` and `DEMO_ADMIN_PASSWORD` set in Vercel, every fresh start of the preview creates that agent login and fills the dashboard with sample requests (`app/lib/demo.php`), and the dashboard shows a "Preview" banner. Never set these on the real site.
-
-## Preview locally
-
-```bash
-cd website
+```
 php -S localhost:8080 -t public_html dev-router.php
-# then open http://localhost:8080  (dashboard: http://localhost:8080/admin/)
+# open http://localhost:8080   (dashboard: http://localhost:8080/admin/)
 ```
 
-## Notes for maintenance
+PHP 8.1 or newer with `pdo_sqlite` and `openssl` (on Windows, add
+`-d extension=pdo_sqlite` if it is not enabled in `php.ini`). With no configuration it uses
+SQLite in `public_html/storage/`, and the first visit to `/admin/` asks you to create an account.
+To see the dashboard filled with sample requests, set the preview variables first:
 
-- Requests are always saved to the dashboard before any email is sent, so a mail problem never loses a lead. Mail errors are logged to `storage/mail.log`, PHP errors to `storage/error.log`.
-- VIN lookups use NHTSA's free vPIC service (no key). Results are cached in the database. If NHTSA is down, customers can still continue; the vehicle shows as "Not verified" in the dashboard.
-- ZIP → city/state uses the free zippopotam.us service. If it's unavailable, customers simply type the city and state themselves.
-- Spam limits are set in `config.php` (`max_quotes_per_hour`, `max_messages_per_hour`, per visitor). Visitor IPs are stored only as a keyed hash.
-- `privacy.php` is a starting template. Have it reviewed against the agency's state requirements before launch.
+```
+DEMO_MODE=1 DEMO_ADMIN_EMAIL=agent@example.com DEMO_ADMIN_PASSWORD=choose-one \
+APP_KEY=any-random-32-character-string \
+php -S localhost:8080 -t public_html dev-router.php
+```
+
+`APP_STORAGE` moves the database, key and logs to another folder. Never set the `DEMO_*`
+variables on the real site. Submitting a quote sends email to `mail.notify_to`, so point that at
+your own inbox in `public_html/app/config.php` before testing the form end to end.
+
+## Deploying to HostGator
+
+1. In cPanel, set PHP 8.1 or newer, and create a MySQL database and user and a sender mailbox on
+   the site's domain.
+2. In `public_html/app/config.php`, fill in the `site` details, set `db.driver` to `mysql` with
+   the database details, set `mail.notify_to` and `mail.from` (or SMTP), and optionally the
+   Turnstile keys.
+3. Upload the contents of `public_html/`, including the `.htaccess` files, and make
+   `public_html/storage` writable.
+4. Run AutoSSL, then uncomment the two "Force HTTPS" lines in `public_html/.htaccess`.
+5. Visit `/admin/` to run the setup checks and create the first account.
+6. Run `tools/smoke-test.sh https://the-domain --send-quote`.
+7. Back up `storage/app.key`: without it, saved ID numbers cannot be decrypted.
+
+The Vercel preview (`vercel.json`, `api/index.php`) keeps its database in `/tmp`, so saved
+requests and logins can reset at any time. Use HostGator for the real site.
